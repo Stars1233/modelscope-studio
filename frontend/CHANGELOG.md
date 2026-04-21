@@ -1,5 +1,15 @@
 # @modelscope-studio/frontend
 
+## 2.0.0
+
+### Features
+
+- [#120](https://github.com/modelscope/modelscope-studio/pull/120) [`0234a61`](https://github.com/modelscope/modelscope-studio/commit/0234a61b02b69825543e3f37b5a0d88e38dcfe4d) - complete new features of antd & antdx. Thanks [@Col0ring](https://github.com/Col0ring)!
+
+### Misc Changes
+
+- [#120](https://github.com/modelscope/modelscope-studio/pull/120) [`0234a61`](https://github.com/modelscope/modelscope-studio/commit/0234a61b02b69825543e3f37b5a0d88e38dcfe4d) - migrate to Gradio 6.0, Ant Design 6.0, Ant Design X 2.0. Thanks [@Col0ring](https://github.com/Col0ring)!
+
 ## 2.0.0-beta.1
 
 ### Features
