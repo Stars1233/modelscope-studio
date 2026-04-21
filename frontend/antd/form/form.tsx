@@ -1,6 +1,7 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { useEffect } from 'react';
 import { useFunction } from '@utils/hooks/useFunction';
+import { useMemoizedEqualValue } from '@utils/hooks/useMemoizedEqualValue';
 import { useMemoizedFn } from '@utils/hooks/useMemoizedFn';
 import { renderParamsSlot } from '@utils/renderParamsSlot';
 import { Form as AForm, type GetProps } from 'antd';
@@ -22,13 +23,14 @@ export const Form = sveltify<FormProps, ['requiredMark']>(
     feedbackIcons,
     slots,
     onResetFormAction,
+    children,
     ...props
   }) => {
     const [form] = AForm.useForm();
     const feedbackIconsFunction = useFunction(feedbackIcons);
     const requiredMarkFunction = useFunction(requiredMark);
     const onResetFormActionMemoized = useMemoizedFn(onResetFormAction);
-
+    const valueMemoized = useMemoizedEqualValue(value);
     useEffect(() => {
       switch (formAction) {
         case 'reset':
@@ -45,12 +47,13 @@ export const Form = sveltify<FormProps, ['requiredMark']>(
     }, [form, formAction, onResetFormActionMemoized]);
 
     useEffect(() => {
-      if (value) {
-        form.setFieldsValue(value);
+      if (valueMemoized) {
+        form.setFieldsValue(valueMemoized);
       } else {
         form.resetFields();
       }
-    }, [form, value]);
+    }, [form, valueMemoized]);
+
     return (
       <AForm
         {...props}
@@ -70,7 +73,9 @@ export const Form = sveltify<FormProps, ['requiredMark']>(
           onValueChange(values);
           onValuesChange?.(changedValues, values);
         }}
-      />
+      >
+        {children}
+      </AForm>
     );
   }
 );

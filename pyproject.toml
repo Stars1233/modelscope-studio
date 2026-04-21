@@ -243,6 +243,8 @@ artifacts = [
   "/backend/modelscope_studio/components/antdx/sources/item/templates",
   "/backend/modelscope_studio/components/antdx/think/templates",
   "/backend/modelscope_studio/components/antdx/thought_chain/thought_chain_item/templates",
+  "/backend/modelscope_studio/components/antd/tag/checkable_tag_group/templates",
+  "/backend/modelscope_studio/components/antd/tag/checkable_tag_group/option/templates",
 ]
 
 [tool.yapfignore]

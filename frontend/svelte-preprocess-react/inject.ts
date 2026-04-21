@@ -1,4 +1,4 @@
-import * as internalReactContext from './react-contexts';
+import * as internalReactContexts from './react-contexts';
 import type { loader as monacoLoader } from '@monaco-editor/react';
 import { loader } from '@monaco-editor/react';
 import React from 'react';
@@ -31,7 +31,7 @@ declare global {
       antdIcons: typeof antdIcons;
       dayjs: typeof dayjs;
 
-      internalReactContext: typeof internalReactContext;
+      internalReactContexts: typeof internalReactContexts;
       initializePromise: Promise<void> | null;
       initialize: () => void;
       tickPromise: Promise<void> | null;
@@ -71,7 +71,7 @@ window.ms_globals = {
   antdCssinjs,
   antdIcons,
   dayjs,
-  internalReactContext,
+  internalReactContexts,
   autokey: 0,
   loadingKey: 0,
   sharedRoot: undefined,

@@ -11,8 +11,8 @@ const baseGlobals = {
   '@ant-design/cssinjs': 'window.ms_globals.antdCssinjs',
   '@ant-design/icons': 'window.ms_globals.antdIcons',
 
-  '@svelte-preprocess-react/react-context':
-    'window.ms_globals.internalReactContext',
+  '@svelte-preprocess-react/react-contexts':
+    'window.ms_globals.internalReactContexts',
   dayjs: 'window.ms_globals.dayjs',
   '@utils/createItemsContext': 'window.ms_globals.createItemsContext',
   '@globals/components': 'window.ms_globals.components',
