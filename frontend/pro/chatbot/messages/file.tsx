@@ -1,125 +1,116 @@
 import type React from 'react';
-import { useMemo } from 'react';
 import { EyeOutlined } from '@ant-design/icons';
-import type { Attachment } from '@ant-design/x/es/attachments';
-import { get_fetchable_url_or_file } from '@utils/upload';
+import { getFetchableUrl } from '@utils/upload';
 import { Button, Flex, theme } from 'antd';
 
-import { FileCard } from '../../../antdx/attachments/file-card/file-card';
+import { BaseFileCard } from '../../../antdx/file-card/base';
 import type { ChatbotFileContent, ChatbotFileContentConfig } from '../type';
 
-const IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'svg'];
-
-function matchExt(suffix: string, ext: string[]) {
-  return ext.some((e) => suffix.toLowerCase() === `.${e}`);
-}
 export interface FileMessageProps {
   options: ChatbotFileContentConfig;
   value?: ChatbotFileContent;
-  urlRoot: string;
-  urlProxyUrl: string;
+  rootUrl: string;
+  apiPrefix: string;
 }
+
+type ChatbotFileContentItem = Exclude<ChatbotFileContent[number], string>;
 
 const resolveItem = (
   item: ChatbotFileContent[number],
-  urlRoot: string,
-  urlProxyUrl: string
-): Attachment => {
+  rootUrl: string,
+  apiPrefix: string
+): ChatbotFileContentItem => {
   if (!item) {
-    return {} as Attachment;
+    return {} as ChatbotFileContentItem;
   }
   if (typeof item === 'string') {
     return {
       url: item.startsWith('http')
         ? item
-        : get_fetchable_url_or_file(item, urlRoot, urlProxyUrl),
+        : getFetchableUrl(item, rootUrl, apiPrefix),
       uid: item,
-      name: item.split('/').pop(),
-    } as Attachment;
+      name: item.split('/').pop()!,
+    } as ChatbotFileContentItem;
   }
   return {
     ...item,
     uid: item.uid || item.path || item.url,
     name:
       item.name || item.orig_name || (item.url || item.path).split('/').pop(),
-    url: item.url || get_fetchable_url_or_file(item.path, urlRoot, urlProxyUrl),
-  } as Attachment;
-};
-
-const FileContainer: React.FC<{
-  item: Attachment;
-  children: React.ReactNode;
-}> = ({ children, item }) => {
-  const { token } = theme.useToken();
-  const isImg = useMemo(() => {
-    const nameStr = item.name || '';
-    const match = nameStr.match(/^(.*)\.[^.]+$/);
-    const nameSuffix = match ? nameStr.slice(match[1].length) : '';
-    return matchExt(nameSuffix, IMG_EXTS);
-  }, [item.name]);
-
-  return (
-    <div
-      className="ms-gr-pro-chatbot-message-file-message-container"
-      style={{
-        borderRadius: token.borderRadius,
-      }}
-    >
-      {isImg ? (
-        <> {children}</>
-      ) : (
-        <>
-          {children}
-          <div
-            className="ms-gr-pro-chatbot-message-file-message-toolbar"
-            style={{
-              backgroundColor: token.colorBgMask,
-              zIndex: token.zIndexPopupBase,
-              borderRadius: token.borderRadius,
-            }}
-          >
-            <Button
-              icon={<EyeOutlined style={{ color: token.colorWhite }} />}
-              variant="link"
-              color="default"
-              size="small"
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            />
-          </div>
-        </>
-      )}
-    </div>
-  );
+    url: item.url || getFetchableUrl(item.path, rootUrl, apiPrefix),
+  } as ChatbotFileContentItem;
 };
 
 export const FileMessage: React.FC<FileMessageProps> = ({
   value,
-  urlProxyUrl,
-  urlRoot,
+  apiPrefix,
+  rootUrl,
   options,
 }) => {
-  const { imageProps } = options;
+  const { imageProps, videoProps, audioProps } = options;
+  const { token } = theme.useToken();
   return (
     <Flex
       gap="small"
+      align="center"
       wrap
       {...options}
       className="ms-gr-pro-chatbot-message-file-message"
     >
       {value?.map((file, index) => {
-        const item = resolveItem(file, urlRoot, urlProxyUrl);
+        const item = resolveItem(file, rootUrl, apiPrefix);
 
         return (
-          <FileContainer key={`${item.uid}-${index}`} item={item}>
-            <FileCard
-              item={item as typeof file}
-              urlRoot={urlRoot}
-              urlProxyUrl={urlProxyUrl}
-              imageProps={imageProps}
-            />
-          </FileContainer>
+          <BaseFileCard
+            key={`${item.uid}-${index}`}
+            name={item.name}
+            type={item.type}
+            byte={item.size}
+            src={item}
+            styles={{
+              file: {
+                maxHeight: 150,
+                width: 'auto',
+                maxWidth: 268,
+              },
+            }}
+            mask={
+              <Button
+                icon={<EyeOutlined />}
+                style={{ color: token.colorWhite }}
+                variant="link"
+                color="default"
+                size="small"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+            rootUrl={rootUrl}
+            apiPrefix={apiPrefix}
+            imageProps={{
+              styles: {
+                cover: {
+                  borderRadius: token.borderRadius,
+                },
+                image: {
+                  height: 68,
+                  width: 68,
+                  borderRadius: token.borderRadius,
+                },
+                ...imageProps?.styles,
+              },
+              ...imageProps,
+            }}
+            videoProps={videoProps}
+            audioProps={{
+              style: {
+                width: 268,
+                ...audioProps?.style,
+              },
+              ...audioProps,
+            }}
+          />
         );
       })}
     </Flex>

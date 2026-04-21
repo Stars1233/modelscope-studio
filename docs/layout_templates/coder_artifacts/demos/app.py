@@ -15,7 +15,7 @@ MODELSCOPE_ACCESS_TOKEN = os.getenv('MODELSCOPE_ACCESS_TOKEN')
 client = OpenAI(api_key=MODELSCOPE_ACCESS_TOKEN,
                 base_url="https://api-inference.modelscope.cn/v1")
 
-model = "Qwen/Qwen2.5-Coder-32B-Instruct"
+model = "Qwen/Qwen3-Coder-480B-A35B-Instruct"
 # =========== Configuration
 
 DEFAULT_SYSTEM_PROMPT = """You are a web development engineer, writing web pages according to the instructions below. You are a powerful code editing assistant capable of writing code and creating artifacts in conversations with users, or modifying and updating existing artifacts as requested by users.
@@ -212,16 +212,17 @@ css = """
 #coder-artifacts-code-drawer .output-code {
   flex:1;
 }
-#coder-artifacts-code-drawer .output-code .ms-gr-ant-spin-nested-loading {
+#coder-artifacts-code-drawer .output-code .ms-gr-ant-spin {
   min-height: 100%;
 }
 """
 
-with gr.Blocks(css=css) as demo:
+with gr.Blocks() as demo:
     # Global State
     state = gr.State({"system_prompt": DEFAULT_SYSTEM_PROMPT, "history": []})
     with ms.Application(elem_id="coder-artifacts") as app:
-        with antd.ConfigProvider(theme=DEFAULT_THEME, locale=DEFAULT_LOCALE):
+        with antd.ConfigProvider(theme_config=DEFAULT_THEME,
+                                 locale=DEFAULT_LOCALE):
             #  Header
             with antd.Flex(justify="center", align="center", gap="middle"):
                 antd.Typography.Title("Coder-Artifacts",
@@ -382,7 +383,6 @@ with gr.Blocks(css=css) as demo:
                             width="750px") as history_drawer:
                         history_output = gr.Chatbot(
                             show_label=False,
-                            type="messages",
                             height='100%',
                             elem_classes="history_chatbot")
                     # Tour
@@ -476,4 +476,4 @@ with gr.Blocks(css=css) as demo:
                                         outputs=[output_code_drawer])
 
 if __name__ == "__main__":
-    demo.queue().launch(ssr_mode=False)
+    demo.queue().launch(css=css, ssr_mode=False)

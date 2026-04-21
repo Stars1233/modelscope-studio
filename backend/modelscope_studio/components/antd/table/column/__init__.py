@@ -32,7 +32,7 @@ class AntdTableColumn(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             built_in_column: Literal['SELECTION_COLUMN', 'EXPAND_COLUMN']
         | None = None,
             *,
@@ -71,6 +71,8 @@ class AntdTableColumn(ModelScopeLayoutComponent):
             hidden: bool | None = None,
             on_cell: str | None = None,
             on_header_cell: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -87,7 +89,9 @@ class AntdTableColumn(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.built_in_column = built_in_column
         self.align = align
         self.col_span = col_span

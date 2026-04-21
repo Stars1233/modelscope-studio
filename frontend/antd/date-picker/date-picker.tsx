@@ -1,6 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import { useMemo } from 'react';
 import { useFunction } from '@utils/hooks/useFunction';
 import { renderItems } from '@utils/renderItems';
@@ -24,7 +23,9 @@ function formatDayjs(date: any): dayjs.Dayjs {
   return dayjs(date);
 }
 
-function formatDate(dates: (dayjs.Dayjs | null | undefined)[] | dayjs.Dayjs) {
+function formatDate(
+  dates: (dayjs.Dayjs | null | undefined)[] | dayjs.Dayjs | null
+) {
   if (Array.isArray(dates)) {
     return dates.map((date) => {
       return date ? date.valueOf() / 1000 : null;
@@ -44,7 +45,6 @@ export const DatePicker = sveltify<
       ...args: any[]
     ) => void;
     onValueChange: (date: ReturnType<typeof formatDate>) => void;
-    setSlotParams: SetSlotParams;
   },
   [
     'allowClear.clearIcon',
@@ -80,7 +80,6 @@ export const DatePicker = sveltify<
       onValueChange,
       onPanelChange,
       children,
-      setSlotParams,
       elRef,
       ...props
     }) => {
@@ -139,12 +138,12 @@ export const DatePicker = sveltify<
             getPopupContainer={getPopupContainerFunction}
             cellRender={
               slots.cellRender
-                ? renderParamsSlot({ slots, setSlotParams, key: 'cellRender' })
+                ? renderParamsSlot({ slots, key: 'cellRender' })
                 : cellRenderFunction
             }
             panelRender={
               slots.panelRender
-                ? renderParamsSlot({ slots, setSlotParams, key: 'panelRender' })
+                ? renderParamsSlot({ slots, key: 'panelRender' })
                 : panelRenderFunction
             }
             presets={useMemo(() => {
@@ -166,14 +165,13 @@ export const DatePicker = sveltify<
             }}
             onChange={(date, ...args) => {
               const formattedDate = formatDate(date);
-              onChange?.(formattedDate, ...args);
               onValueChange(formattedDate);
+              onChange?.(formattedDate, ...args);
             }}
             renderExtraFooter={
               slots.renderExtraFooter
                 ? renderParamsSlot({
                     slots,
-                    setSlotParams,
                     key: 'renderExtraFooter',
                   })
                 : props.renderExtraFooter

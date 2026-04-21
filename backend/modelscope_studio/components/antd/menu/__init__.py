@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any, Literal
 
 from gradio.events import EventListener
@@ -30,11 +31,11 @@ class AntdMenu(ModelScopeLayoutComponent):
     ]
 
     # supported slots
-    SLOTS = ["expandIcon", 'overflowedIndicator', "items"]
+    SLOTS = ["expandIcon", 'overflowedIndicator', "items", 'popupRender']
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             open_keys: list[str] | None = None,
             selected_keys: list[str] | None = None,
@@ -53,8 +54,12 @@ class AntdMenu(ModelScopeLayoutComponent):
             sub_menu_close_delay: int | float = 0.1,
             sub_menu_open_delay: int | float = 0,
             theme: Literal['light', 'dark'] | None = None,
+            theme_value: Literal['light', 'dark'] | None = None,
             trigger_sub_menu_action: Literal['click', 'hover'] = 'hover',
+            popup_render: str | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -71,7 +76,9 @@ class AntdMenu(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.open_keys = open_keys
         self.selected_keys = selected_keys
         self.selectable = selectable
@@ -88,6 +95,12 @@ class AntdMenu(ModelScopeLayoutComponent):
         self.sub_menu_close_delay = sub_menu_close_delay
         self.sub_menu_open_delay = sub_menu_open_delay
         self.theme = theme
+        self.popup_render = popup_render
+        if theme:
+            warnings.warn(
+                """<modelscope-studio>[antd.Menu.Item]:  the `theme` property conflicts with Gradio's preset properties. Please use `theme_value` instead."""
+            )
+        self.theme_value = theme_value or theme
         self.trigger_sub_menu_action = trigger_sub_menu_action
         self.root_class_name = root_class_name
 

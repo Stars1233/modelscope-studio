@@ -30,7 +30,7 @@ class AntdTour(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             open: bool | None = None,
             current: int | None = None,
@@ -50,7 +50,10 @@ class AntdTour(ModelScopeLayoutComponent):
             actions_render: str | None = None,
             z_index: int | None = None,
             get_popup_container: str | None = None,
+            keyboard: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -67,7 +70,9 @@ class AntdTour(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.open = open
         self.current = current
         self.arrow = arrow
@@ -82,6 +87,7 @@ class AntdTour(ModelScopeLayoutComponent):
         self.actions_render = actions_render
         self.z_index = z_index
         self.get_popup_container = get_popup_container
+        self.keyboard = keyboard
         self.root_class_name = root_class_name
 
     FRONTEND_DIR = resolve_frontend_dir("tour")

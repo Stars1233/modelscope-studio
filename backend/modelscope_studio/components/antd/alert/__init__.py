@@ -16,7 +16,13 @@ class AntdAlert(ModelScopeLayoutComponent):
     EVENTS = [
         EventListener("close",
                       callback=lambda block: block._internal.update(
-                          bind_close_event=True))
+                          bind_close_event=True)),
+        EventListener("click",
+                      callback=lambda block: block._internal.update(
+                          bind_click_event=True)),
+        EventListener("closable_close",
+                      callback=lambda block: block._internal.update(
+                          bind_closable_close_event=True))
     ]
 
     # supported slots
@@ -24,7 +30,7 @@ class AntdAlert(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             action: str | None = None,
             after_close: str | None = None,
@@ -36,6 +42,8 @@ class AntdAlert(ModelScopeLayoutComponent):
             show_icon: bool | None = None,
             type: Literal['success', 'info', 'warning', 'error'] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -52,7 +60,9 @@ class AntdAlert(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.action = action
         self.after_close = after_close
         self.banner = banner

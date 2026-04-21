@@ -43,6 +43,9 @@ class AntdSelect(ModelScopeDataLayoutComponent):
         EventListener("popup_visible_change",
                       callback=lambda block: block._internal.update(
                           bind_popupVisibleChange_event=True)),
+        EventListener("active",
+                      callback=lambda block: block._internal.update(
+                          bind_active_event=True)),
     ]
 
     # supported slots
@@ -56,7 +59,7 @@ class AntdSelect(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | int | float | list[float | int | str] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | dict | None = None,
             auto_clear_search_value: bool | None = None,
@@ -86,7 +89,7 @@ class AntdSelect(ModelScopeDataLayoutComponent):
             mode: Literal['multiple', 'tags'] | None = None,
             not_found_content: str | None = None,
             open: bool | None = None,
-            option_filter_prop: str | None = None,
+            option_filter_prop: str | list[str] | None = None,
             option_label_prop: str | None = None,
             options: list[dict] | None = None,
             option_render: str | None = None,
@@ -106,8 +109,8 @@ class AntdSelect(ModelScopeDataLayoutComponent):
             variant: Literal['outlined', 'borderless', 'filled', 'underlined']
         | None = None,
             virtual: bool | None = True,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -128,7 +131,7 @@ class AntdSelect(ModelScopeDataLayoutComponent):
                          key=key,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.allow_clear = allow_clear
         self.auto_clear_search_value = auto_clear_search_value
         self.auto_focus = auto_focus

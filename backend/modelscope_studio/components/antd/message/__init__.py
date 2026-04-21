@@ -26,17 +26,20 @@ class AntdMessage(ModelScopeLayoutComponent):
     def __init__(
             self,
             content: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             type: Literal['success', 'info', 'warning', 'error', 'loading']
         | None = None,
             duration: float | int | None = None,
             icon: str | None = None,
             key: str | int | float | None = None,
+            pause_on_hover: bool | None = None,
             get_container: str | None = None,
             rtl: bool | None = None,
             top: int | float | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -53,16 +56,19 @@ class AntdMessage(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
+        self.class_names = class_names
+        self.styles = styles
         self.content = content
         self.duration = duration
         self.icon = icon
         self.type = type
         self.key = key
+        self.pause_on_hover = pause_on_hover
         self.get_container = get_container
         self.rtl = rtl
         self.top = top
         self.root_class_name = root_class_name
-        self.props = props
+        self.additional_props = additional_props
 
     FRONTEND_DIR = resolve_frontend_dir("message")
 

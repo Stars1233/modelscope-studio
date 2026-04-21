@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any, Literal
 
 from ....utils.dev import ModelScopeLayoutComponent, resolve_frontend_dir
@@ -16,7 +17,7 @@ class AntdXXProvider(ModelScopeLayoutComponent):
     SLOTS = ["renderEmpty"]
 
     def __init__(self,
-                 props: dict | None = None,
+                 additional_props: dict | None = None,
                  *,
                  component_disabled: bool | None = None,
                  component_size: Literal['small', 'middle', 'large']
@@ -31,11 +32,14 @@ class AntdXXProvider(ModelScopeLayoutComponent):
                  popup_overflow: Literal['viewport', 'scroll'] | None = None,
                  prefix_cls: str | None = None,
                  render_empty: str | None = None,
-                 theme: dict | None = None,
+                 theme: str | None = None,
+                 theme_config: dict | None = None,
                  variant: Literal['outlined', 'filled', 'borderless']
                  | None = None,
                  virtual: bool | None = None,
                  warning: dict | None = None,
+                 class_names: dict | str | None = None,
+                 styles: dict | str | None = None,
                  as_item: str | None = None,
                  _internal: None = None,
                  visible: bool = True,
@@ -51,7 +55,9 @@ class AntdXXProvider(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.component_disabled = component_disabled
         self.component_size = component_size
         self.csp = csp
@@ -65,6 +71,11 @@ class AntdXXProvider(ModelScopeLayoutComponent):
         self.prefix_cls = prefix_cls
         self.render_empty = render_empty
         self.theme = theme
+        if theme:
+            warnings.warn(
+                """<modelscope-studio>[antdx.XProvider]:  the `theme` property conflicts with Gradio's preset properties. Please use `theme_config` instead."""
+            )
+        self.theme_config = theme_config or theme
         self.variant = variant
         self.virtual = virtual
         self.warning = warning

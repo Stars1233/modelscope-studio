@@ -2,7 +2,7 @@ import { sveltify } from '@svelte-preprocess-react';
 import {
   SuggestionContext,
   SuggestionOpenContext,
-} from '@svelte-preprocess-react/context';
+} from '@svelte-preprocess-react/react-contexts';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Suggestion as XSuggestion, type SuggestionProps } from '@ant-design/x';
@@ -76,13 +76,21 @@ export const Suggestion = sveltify<
 >(
   withItemsContextProvider(
     ['default', 'items'],
-    ({ children, items, shouldTrigger, slots, ...props }) => {
+    ({
+      children,
+      items,
+      shouldTrigger,
+      getPopupContainer,
+      slots,
+      ...props
+    }) => {
       const [open, setOpen] = useState(() => props.open ?? false);
       const { items: slotItems } = useItems<['default', 'items']>();
       const resolvedSlotItems =
         slotItems.items.length > 0 ? slotItems.items : slotItems.default;
       const itemsFunction = useFunction(items);
       const shouldTriggerFunction = useFunction(shouldTrigger);
+      const getPopupContainerFunction = useFunction(getPopupContainer);
       const resolvedItems = useMemo(() => {
         return (items ||
           renderItems<SuggestionItem>(resolvedSlotItems, {
@@ -117,11 +125,13 @@ export const Suggestion = sveltify<
           setOpen(props.open);
         }
       }, [props.open]);
+
       return (
         <>
           <XSuggestion
             {...props}
             items={itemsFunction || itemsRender}
+            getPopupContainer={getPopupContainerFunction}
             onOpenChange={(suggestionOpen, ...args) => {
               if (isUndefined(props.open)) {
                 setOpen(suggestionOpen);

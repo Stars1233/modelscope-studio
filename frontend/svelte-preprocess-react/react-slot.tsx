@@ -1,6 +1,7 @@
-import { useContextPropsContext } from '@svelte-preprocess-react/context';
+import { useContextPropsContext } from '@svelte-preprocess-react/react-contexts';
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useMemoizedEqualValue } from '@utils/hooks/useMemoizedEqualValue';
 import { styleObject2HtmlStyle } from '@utils/style';
 import { debounce } from 'lodash-es';
 
@@ -12,19 +13,29 @@ export interface ReactSlotProps {
   className?: string;
 }
 
-function cloneElementWithEvents(element: HTMLElement) {
+function cloneElementWithEvents(element: HTMLElement, render: () => void) {
   const portals: React.ReactPortal[] = [];
   const clonedElement = element.cloneNode(false) as HTMLElement;
   if (element._reactElement) {
+    const unregister = element._registerEffect(() => {
+      render();
+      unregister();
+    });
     const resolvedChildren: Array<React.ReactNode> & {
       originalChildren: React.ReactNode;
     } = React.Children.toArray(element._reactElement.props.children).map(
       (child) => {
         // get svelte-slot
-        if (React.isValidElement(child) && child.props.__slot__) {
+        if (
+          React.isValidElement<{
+            el: HTMLElement;
+            children: React.ReactNode;
+            __slot__?: boolean;
+          }>(child) &&
+          child.props.__slot__
+        ) {
           const { portals: childPortals, clonedElement: childClonedElement } =
-            cloneElementWithEvents(child.props.el);
-
+            cloneElementWithEvents(child.props.el, render);
           // Child Component
           return React.cloneElement(child, {
             ...child.props,
@@ -68,7 +79,7 @@ function cloneElementWithEvents(element: HTMLElement) {
     // element
     if (child.nodeType === 1) {
       const { clonedElement: clonedChild, portals: portalsChildren } =
-        cloneElementWithEvents(child as HTMLElement);
+        cloneElementWithEvents(child as HTMLElement, render);
       portals.push(...portalsChildren);
       clonedElement.appendChild(clonedChild);
       // clonedElement.replaceChild(clonedChild, clonedElement.children[i]);
@@ -96,23 +107,30 @@ function mountElRef(elRef: React.ForwardedRef<HTMLElement>, el: HTMLElement) {
 
 // eslint-disable-next-line react/display-name
 export const ReactSlot = forwardRef<HTMLElement, ReactSlotProps>(
-  ({ slot, clone: cloneProp, className, style, observeAttributes }, elRef) => {
-    const ref = useRef<HTMLElement>();
+  (
+    { slot, clone: cloneProp, className, style: styleProp, observeAttributes },
+    elRef
+  ) => {
+    const ref = useRef<HTMLElement | null>(null);
     const [children, setChildren] = useState<React.ReactElement[]>([]);
     const { forceClone } = useContextPropsContext();
     const clone = forceClone ? true : cloneProp;
+    const style = useMemoizedEqualValue(styleProp);
     useEffect(() => {
       if (!ref.current || !slot) {
         return;
       }
+      // the cloned component change props
       let cloned = slot;
-
       function mountElementProps() {
         let child = cloned as Element;
         if (
           cloned.tagName.toLowerCase() === 'svelte-slot' &&
-          cloned.children.length === 1 &&
-          cloned.children[0]
+          ((cloned.children.length === 1 && cloned.children[0]) ||
+            (cloned.children.length === 2 &&
+              cloned.children[0]?.tagName?.toLowerCase() ===
+                'react-portal-target' &&
+              cloned.children[1]?.tagName?.toLowerCase() === 'svelte-slot'))
         ) {
           child = cloned.children[0];
           if (
@@ -142,8 +160,10 @@ export const ReactSlot = forwardRef<HTMLElement, ReactSlotProps>(
           if (ref.current?.contains(cloned)) {
             ref.current?.removeChild(cloned);
           }
-
-          const { portals, clonedElement } = cloneElementWithEvents(slot);
+          const { portals, clonedElement } = cloneElementWithEvents(
+            slot,
+            render
+          );
           cloned = clonedElement;
           setChildren(portals);
           cloned.style.display = 'contents';

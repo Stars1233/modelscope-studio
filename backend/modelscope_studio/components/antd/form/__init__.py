@@ -43,7 +43,7 @@ class AntdForm(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: dict | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             form_action: Literal['reset', 'submit', 'validate'] | None = None,
             colon: bool = True,
@@ -67,6 +67,8 @@ class AntdForm(ModelScopeDataLayoutComponent):
             wrapper_col: dict | None = None,
             clear_on_destroy: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -84,7 +86,9 @@ class AntdForm(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.form_action = form_action
         self.colon = colon
         self.disabled = disabled

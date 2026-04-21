@@ -27,12 +27,14 @@ class AntdAffix(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             offset_bottom: int | float | None = None,
             offset_top: int | float | None = None,
             get_target: str | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -55,7 +57,9 @@ class AntdAffix(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.offset_bottom = offset_bottom
         self.offset_top = offset_top
         self.get_target = get_target

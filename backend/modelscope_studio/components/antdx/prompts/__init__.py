@@ -27,16 +27,18 @@ class AntdXPrompts(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
             *,
             items: list[dict] | None = None,
             prefix_cls: str | None = None,
             title: str | None = None,
             vertical: bool | None = None,
+            fade_in: bool | None = None,
+            fade_in_left: bool | None = None,
             wrap: bool | None = None,
-            styles: dict | None = None,
-            class_names: dict | None = None,
+            styles: dict | str | None = None,
+            class_names: dict | str | None = None,
             root_class_name: str | None = None,
+            additional_props: dict | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -53,11 +55,13 @@ class AntdXPrompts(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.items = items
         self.prefix_cls = prefix_cls
         self.title = title
         self.vertical = vertical
+        self.fade_in = fade_in
+        self.fade_in_left = fade_in_left
         self.wrap = wrap
         self.styles = styles
         self.class_names = class_names

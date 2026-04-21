@@ -3,7 +3,7 @@ from __future__ import annotations
 import tempfile
 from dataclasses import field
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import gradio_client.utils as client_utils
 from gradio import FileData, processing_utils
@@ -53,7 +53,7 @@ class MultimodalInputUploadConfig(GradioModel):
     allow_speech: Optional[bool] = False
     show_count: Optional[bool] = True
     upload_button_tooltip: Optional[str] = None
-    accept: Optional[str] = None
+    accept: Optional[Union[str, dict]] = None
     max_count: Optional[int] = None
     directory: Optional[bool] = False
     multiple: Optional[bool] = False
@@ -117,6 +117,9 @@ class ModelScopeProMultimodalInput(ModelScopeDataLayoutComponent):
         EventListener("paste_file",
                       callback=lambda block: block._internal.update(
                           bind_pasteFile_event=True)),
+        EventListener("skill_closable_close",
+                      callback=lambda block: block._internal.update(
+                          bind_skill_closable_close_event=True)),
         EventListener("drop",
                       callback=lambda block: block._internal.update(
                           bind_drop_event=True)),
@@ -134,7 +137,10 @@ class ModelScopeProMultimodalInput(ModelScopeDataLayoutComponent):
     data_model = MultimodalInputValue
 
     # supported slots
-    SLOTS = ['actions', "prefix", 'footer', 'header']
+    SLOTS = [
+        'suffix', 'header', 'prefix', 'footer', 'skill.title',
+        'skill.toolTip.title', 'skill.closable.closeIcon'
+    ]
 
     def __init__(
             self,
@@ -144,7 +150,8 @@ class ModelScopeProMultimodalInput(ModelScopeDataLayoutComponent):
             auto_size: bool | dict | None = None,
             footer: str | None = None,
             header: str | None = None,
-            actions: str | bool | None = None,
+            prefix: str | None = None,
+            suffix: str | bool | None = None,
             class_names: dict | None = None,
             styles: dict | None = None,
             loading: bool | None = None,
@@ -153,6 +160,8 @@ class ModelScopeProMultimodalInput(ModelScopeDataLayoutComponent):
             submit_type: Literal['enter', 'shiftEnter'] | None = None,
             placeholder: str | None = None,
             upload_config: MultimodalInputUploadConfig | dict | None = None,
+            slot_config: list[dict] | None = None,
+            skill: dict | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -175,12 +184,15 @@ class ModelScopeProMultimodalInput(ModelScopeDataLayoutComponent):
         self.mode = mode
         self.footer = footer
         self.header = header
-        self.actions = actions
-        self.class_names = class_names
+        self.prefix = prefix
+        self.suffix = suffix
         self.disabled = disabled
+        self.class_names = class_names
         self.styles = styles
         self.submit_type = submit_type
         self.read_only = read_only
+        self.slot_config = slot_config
+        self.skill = skill
         self.loading = loading
         self.placeholder = placeholder
         self.root_class_name = root_class_name

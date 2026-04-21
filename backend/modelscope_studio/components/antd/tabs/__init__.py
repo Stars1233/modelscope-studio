@@ -37,7 +37,7 @@ class AntdTabs(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             active_key: str | None = None,
             add_icon: str | None = None,
@@ -57,10 +57,14 @@ class AntdTabs(ModelScopeLayoutComponent):
             tab_bar_style: dict | None = None,
             tab_position: Literal["left", "right", "top", "bottom"]
         | None = None,
+            tab_placement: Literal["top", "bottom", "start", "end"]
+        | None = None,
             destroy_inactive_tab_pane: bool | None = None,
             destroy_on_hidden: bool | None = None,
             type: Literal["card", "line", "editable-card"] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -77,7 +81,9 @@ class AntdTabs(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.active_key = active_key
         self.add_icon = add_icon
         self.animated = animated
@@ -95,6 +101,7 @@ class AntdTabs(ModelScopeLayoutComponent):
         self.tab_bar_gutter = tab_bar_gutter
         self.tab_bar_style = tab_bar_style
         self.tab_position = tab_position
+        self.tab_placement = tab_placement
         self.destroy_inactive_tab_pane = destroy_inactive_tab_pane
         self.destroy_on_hidden = destroy_on_hidden
         self.type = type

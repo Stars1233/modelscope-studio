@@ -49,7 +49,7 @@ class AntdDatePicker(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | int | float | list[str | int | float] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | dict = True,
             auto_focus: bool | None = None,
@@ -97,7 +97,10 @@ class AntdDatePicker(ModelScopeDataLayoutComponent):
             show_now: bool | None = None,
             show_time: bool | dict | None = None,
             show_week: bool | None = None,
+            preview_value: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -115,7 +118,9 @@ class AntdDatePicker(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.order = order
         self.preserve_invalid_on_blur = preserve_invalid_on_blur
         self.components = components
@@ -158,6 +163,7 @@ class AntdDatePicker(ModelScopeDataLayoutComponent):
         self.show_now = show_now
         self.show_time = show_time
         self.show_week = show_week
+        self.preview_value = preview_value
         self.root_class_name = root_class_name
 
     FRONTEND_DIR = resolve_frontend_dir("date-picker")

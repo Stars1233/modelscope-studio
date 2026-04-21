@@ -36,14 +36,14 @@ class AntdInputSearch(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             enter_button: str | bool | None = None,
             loading: bool | None = None,
             addon_after: str | None = None,
             addon_before: str | None = None,
             allow_clear: bool | dict | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             count: dict | None = None,
             default_value: str | None = None,
             read_only: bool | None = None,
@@ -53,7 +53,7 @@ class AntdInputSearch(ModelScopeDataLayoutComponent):
             show_count: bool | dict = None,
             size: Literal['large', 'middle', 'small'] | None = None,
             status: Literal['error', 'warning'] | None = None,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             suffix: str | None = None,
             type: str | None = None,
             placeholder: str | None = None,
@@ -77,7 +77,7 @@ class AntdInputSearch(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.enter_button = enter_button
         self.loading = loading
         self.addon_after = addon_after

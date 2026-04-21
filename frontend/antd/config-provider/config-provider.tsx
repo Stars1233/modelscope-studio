@@ -1,6 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React, { useEffect, useState } from 'react';
 import { StyleProvider } from '@ant-design/cssinjs';
 import { useFunction } from '@utils/hooks/useFunction';
@@ -66,7 +65,6 @@ export const ConfigProvider = sveltify<
     style?: React.CSSProperties;
     id?: string;
     component?: React.ComponentType<ConfigProviderProps>;
-    setSlotParams: SetSlotParams;
   },
   ['renderEmpty']
 >(
@@ -80,7 +78,6 @@ export const ConfigProvider = sveltify<
     getTargetContainer,
     getPopupContainer,
     renderEmpty,
-    setSlotParams,
     children,
     component,
     ...props
@@ -107,6 +104,7 @@ export const ConfigProvider = sveltify<
       });
     }, [localeProp]);
     const ProviderComponent = component || AConfigProvider;
+
     return (
       <div id={id} className={className} style={style}>
         <StyleProvider hashPriority="high" container={document.body}>
@@ -120,7 +118,6 @@ export const ConfigProvider = sveltify<
               slots.renderEmpty
                 ? renderParamsSlot({
                     slots,
-                    setSlotParams,
                     key: 'renderEmpty',
                   })
                 : renderEmptyFunction
@@ -128,7 +125,6 @@ export const ConfigProvider = sveltify<
             // switch bug
             // key={`${algorithm.dark}`}
             theme={{
-              cssVar: true,
               ...props.theme,
               algorithm: Object.keys(algorithm)
                 .map((algo) => {

@@ -1,5 +1,4 @@
 import { parse, transformFromAstSync, traverse, types as t } from '@babel/core';
-import fg from 'fast-glob';
 import path from 'node:path';
 import url from 'node:url';
 
@@ -11,7 +10,9 @@ const baseGlobals = {
   antdx: 'window.ms_globals.antdx',
   '@ant-design/cssinjs': 'window.ms_globals.antdCssinjs',
   '@ant-design/icons': 'window.ms_globals.antdIcons',
-  '@svelte-preprocess-react/context': 'window.ms_globals.internalContext',
+
+  '@svelte-preprocess-react/react-context':
+    'window.ms_globals.internalReactContext',
   dayjs: 'window.ms_globals.dayjs',
   '@utils/createItemsContext': 'window.ms_globals.createItemsContext',
   '@globals/components': 'window.ms_globals.components',
@@ -26,19 +27,7 @@ function generateSveltePreprocessReactAliases() {
     '@svelte-preprocess-react': path.resolve(dirname, baseDir),
   };
 
-  const files = fg.sync([`${baseDir}/*.ts`, `${baseDir}/*.tsx`], {
-    cwd: dirname,
-    absolute: false,
-  });
-
-  const moduleAliases = files.reduce((aliases, file) => {
-    const fileName = path.basename(file, path.extname(file));
-    aliases[`@svelte-preprocess-react/${fileName}`] = path.resolve(
-      dirname,
-      file
-    );
-    return aliases;
-  }, {});
+  const moduleAliases = {};
 
   return {
     ...baseAlias,

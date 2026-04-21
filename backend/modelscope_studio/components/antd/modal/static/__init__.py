@@ -29,14 +29,14 @@ class AntdModalStatic(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             after_close: str | None = None,
             auto_focus_button: Literal['ok', 'cancel'] | None = 'ok',
             type: Literal['info', 'success', 'error', 'warning', 'confirm']
         | None = None,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             cancel_button_props: dict | None = None,
             cancel_text: str | None = None,
             centered: bool | None = None,
@@ -45,6 +45,7 @@ class AntdModalStatic(ModelScopeLayoutComponent):
             confirm_loading: bool | None = None,
             destroy_on_close: bool | None = None,
             focus_trigger_after_close: bool | None = None,
+            focusable: dict | None = None,
             content: str | None = None,
             footer: str | None = None,
             force_render: bool | None = None,
@@ -79,7 +80,7 @@ class AntdModalStatic(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.after_close = after_close
         self.auto_focus_button = auto_focus_button
         self.class_names = class_names
@@ -92,6 +93,7 @@ class AntdModalStatic(ModelScopeLayoutComponent):
         self.close_icon = close_icon
         self.confirm_loading = confirm_loading
         self.destroy_on_close = destroy_on_close
+        self.focusable = focusable
         self.focus_trigger_after_close = focus_trigger_after_close
         self.content = content
         self.footer = footer

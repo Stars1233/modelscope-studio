@@ -13,7 +13,6 @@ from gradio.utils import NamedString
 from gradio_client import handle_file
 
 from ....utils.dev import ModelScopeDataLayoutComponent, resolve_frontend_dir
-from .file_card import AntdXAttachmentsFileCard
 
 if TYPE_CHECKING:
     from gradio.components import Timer
@@ -24,8 +23,6 @@ class AntdXAttachments(ModelScopeDataLayoutComponent):
     """
     Ant Design: https://ant.design/components/attachments
     """
-
-    FileCard = AntdXAttachmentsFileCard
 
     EVENTS = [
         EventListener("change",
@@ -69,10 +66,10 @@ class AntdXAttachments(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: list[str] | Callable | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             image_props: dict | None = None,
-            accept: str | None = None,
+            accept: str | dict | None = None,
             action: str | None = None,
             before_upload: str | None = None,
             custom_request: str | None = None,
@@ -99,9 +96,9 @@ class AntdXAttachments(ModelScopeDataLayoutComponent):
             progress: dict | None = None,
             show_upload_list: bool | dict | None = True,
             with_credentials: bool | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             root_style: dict | None = None,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -127,7 +124,7 @@ class AntdXAttachments(ModelScopeDataLayoutComponent):
                          inputs=inputs,
                          render=render,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.image_props = image_props
         self.accept = accept
         self.action = action

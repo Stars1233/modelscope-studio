@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from gradio.events import EventListener
 
@@ -31,10 +31,10 @@ class AntdSlider(ModelScopeDataLayoutComponent):
             self,
             value: int | float | tuple[int | float, int | float]
         | list[int | float] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             auto_focus: bool | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             default_value: int | float | tuple[int | float, int | float]
         | list[int | float] | None = None,
             disabled: bool | None = None,
@@ -47,8 +47,9 @@ class AntdSlider(ModelScopeDataLayoutComponent):
             range: bool | dict | None = False,
             reverse: bool | None = None,
             step: int | float | None = 1,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             tooltip: dict | None = None,
+            orientation: Literal['horizontal', 'vertical'] | None = None,
             vertical: bool | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
@@ -68,7 +69,7 @@ class AntdSlider(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.auto_focus = auto_focus
         self.class_names = class_names
         self.default_value = default_value
@@ -84,6 +85,7 @@ class AntdSlider(ModelScopeDataLayoutComponent):
         self.step = step
         self.styles = styles
         self.tooltip = tooltip
+        self.orientation = orientation
         self.vertical = vertical
         self.root_class_name = root_class_name
 

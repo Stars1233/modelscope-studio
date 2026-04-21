@@ -1,25 +1,22 @@
 import { sveltify } from '@svelte-preprocess-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { Bubble } from '@ant-design/x';
-import type {
-  BubbleDataType,
-  BubbleListProps,
-  BubbleListRef,
-} from '@ant-design/x/es/bubble/BubbleList';
+import {
+  Bubble,
+  type BubbleItemType,
+  type BubbleListProps,
+} from '@ant-design/x';
+import type { BubbleListRef } from '@ant-design/x/es/bubble';
 import { convertObjectKeyToCamelCase } from '@utils/convertToCamelCase';
 import { useMemoizedFn } from '@utils/hooks/useMemoizedFn';
 import { omitUndefinedProps } from '@utils/omitUndefinedProps';
-import { Button } from 'antd';
+import { Avatar, Button } from 'antd';
 import cls from 'classnames';
 import { produce } from 'immer';
 import { isEqual, omit } from 'lodash-es';
 
 import { withRoleItemsContextProvider } from '../../antdx/bubble/list/context';
-import {
-  messageIndexSymbol,
-  useRolesRender,
-} from '../../antdx/bubble/list/utils';
+import { messageIndexSymbol, useRole } from '../../antdx/bubble/list/utils';
 
 import { useScroll } from './hooks/useScroll';
 import { WelcomeMessage } from './messages/welcome';
@@ -52,10 +49,10 @@ import {
 import './chatbot.less';
 
 export const Chatbot = sveltify<{
-  urlRoot: string;
-  urlProxyUrl: string;
+  rootUrl: string;
+  apiPrefix: string;
   themeMode: string;
-  roles?: BubbleListProps['roles'];
+  role?: BubbleListProps['role'];
   autoScroll?: boolean;
   showScrollToBottomButton?: boolean;
   scrollToBottomButtonOffset?: number;
@@ -78,7 +75,7 @@ export const Chatbot = sveltify<{
   onWelcomePromptSelect?: (v: WelcomePromptData) => void;
 }>(
   withRoleItemsContextProvider(
-    ['roles'],
+    ['role'],
     ({
       id,
       className,
@@ -87,9 +84,9 @@ export const Chatbot = sveltify<{
       minHeight,
       maxHeight,
       value,
-      roles,
-      urlRoot,
-      urlProxyUrl,
+      role,
+      rootUrl,
+      apiPrefix,
       themeMode,
       autoScroll = true,
       showScrollToBottomButton = true,
@@ -122,10 +119,10 @@ export const Chatbot = sveltify<{
           lineBreaks: true,
           renderMarkdown: true,
           ...convertObjectKeyToCamelCase(markdownConfig),
-          urlRoot,
+          rootUrl,
           themeMode,
         }),
-        [markdownConfig, themeMode, urlRoot]
+        [markdownConfig, themeMode, rootUrl]
       );
       const resolvedUserConfig = useMemo(() => {
         return (
@@ -138,34 +135,43 @@ export const Chatbot = sveltify<{
         ) as typeof botConfig;
       }, [botConfig]);
       const resolvedValue = useMemo(() => {
-        const newValue = (value || [])
-          .map((item, i) => {
-            const isLastMessage = i === value.length - 1;
-            const resolvedItem = omitUndefinedProps(item, { omitNull: true });
-            return {
-              ...omit(resolvedItem, ['header', 'footer', 'avatar']),
+        const newValue = (value || []).map((item, i) => {
+          const isLastMessage = i === value.length - 1;
+          const resolvedItem = omitUndefinedProps(item, { omitNull: true });
+          return {
+            ...omitUndefinedProps({
+              ...omit(resolvedItem, [
+                'header',
+                'footer',
+                'avatar',
+                'divider_props',
+              ]),
+              dividerProps: resolvedItem.divider_props,
+            }),
+            ...{
               [messageIndexSymbol]: i,
               [messageHeaderSymbol]: resolvedItem.header,
               [messageFooterSymbol]: resolvedItem.footer,
               [messageAvatarSymbol]: resolvedItem.avatar,
               [lastMessageSymbol]: isLastMessage,
               key: resolvedItem.key ?? `${i}`,
-            };
-          })
-          .filter((item) => item.role !== 'system') as BubbleDataType[];
+            },
+          };
+        }) as BubbleItemType[];
         return newValue.length > 0
           ? newValue
           : [
               {
                 role: 'chatbot-internal-welcome',
-              },
+                key: 'chatbot-internal-welcome',
+              } as BubbleItemType,
             ];
       }, [value]);
 
       const chatbotRef = useRef<BubbleListRef | null>(null);
       const [editIndex, setEditIndex] = useState(-1);
       const [editValues, setEditValues] = useState<Record<number, string>>({});
-      const oldValueRef = useRef<typeof value>();
+      const oldValueRef = useRef<typeof value | undefined>(undefined);
 
       const handleEditValue = useMemoizedFn((itemIndex: number, v: string) => {
         setEditValues((prev) => ({ ...prev, [itemIndex]: v }));
@@ -241,13 +247,13 @@ export const Chatbot = sveltify<{
         );
         onDelete?.(v);
       });
-      const rolesRender = useRolesRender<ChatbotMessage>(
+      const resolvedRole = useRole<ChatbotMessage>(
         {
-          roles,
+          role,
           preProcess(bubbleProps, index) {
             const isUserRole = bubbleProps.role === 'user';
             return {
-              ...(bubbleProps as BubbleDataType),
+              ...(bubbleProps as BubbleItemType),
               style: bubbleProps.elem_style,
               className: cls(
                 bubbleProps.elem_classes,
@@ -261,6 +267,13 @@ export const Chatbot = sveltify<{
                     : resolvedBotConfig?.class_names?.avatar,
                   bubbleProps.class_names?.avatar,
                   'ms-gr-pro-chatbot-message-avatar'
+                ),
+                body: cls(
+                  isUserRole
+                    ? resolvedUserConfig?.class_names?.body
+                    : resolvedBotConfig?.class_names?.body,
+                  bubbleProps.class_names?.body,
+                  'ms-gr-pro-chatbot-message-body'
                 ),
                 header: cls(
                   isUserRole
@@ -289,21 +302,26 @@ export const Chatbot = sveltify<{
               },
             };
           },
-          postProcess(bubbleProps, index) {
+          defaultRolePostProcess(bubbleProps, index) {
             const isUserRole = bubbleProps.role === 'user';
-
             switch (bubbleProps.role) {
               case 'chatbot-internal-welcome':
                 return {
                   variant: 'borderless',
                   styles: {
+                    root: {
+                      paddingInlineEnd: 0,
+                    },
                     content: { width: '100%' },
+                    body: {
+                      width: '100%',
+                    },
                   },
-                  messageRender() {
+                  contentRender() {
                     return (
                       <WelcomeMessage
-                        urlRoot={urlRoot}
-                        urlProxyUrl={urlProxyUrl}
+                        rootUrl={rootUrl}
+                        apiPrefix={apiPrefix}
                         options={resolvedWelcomeConfig || {}}
                         onWelcomePromptSelect={handleWelcomePromptSelect}
                       />
@@ -311,13 +329,15 @@ export const Chatbot = sveltify<{
                   },
                 };
               case 'user':
-              case 'assistant':
+              case 'assistant': {
+                const avatarProps = getAvatarProps(
+                  bubbleProps[messageAvatarSymbol] ??
+                    (isUserRole
+                      ? resolvedUserConfig?.avatar
+                      : resolvedBotConfig?.avatar)
+                );
                 return {
-                  ...omit(isUserRole ? resolvedUserConfig : resolvedBotConfig, [
-                    'actions',
-                    'avatar',
-                    'header',
-                  ]),
+                  ...(isUserRole ? resolvedUserConfig : resolvedBotConfig),
                   ...bubbleProps,
                   style: {
                     ...(isUserRole
@@ -342,16 +362,11 @@ export const Chatbot = sveltify<{
                       markdownConfig={resolvedMarkdownConfig}
                     />
                   ),
-                  avatar: getAvatarProps(
-                    bubbleProps[messageAvatarSymbol] ??
-                      (isUserRole
-                        ? resolvedUserConfig?.avatar
-                        : resolvedBotConfig?.avatar)
-                  ),
+                  avatar: avatarProps ? <Avatar {...avatarProps} /> : undefined,
                   footer:
                     // bubbleProps[lastMessageSymbol] &&
                     bubbleProps.loading ||
-                    bubbleProps.status === 'pending' ? null : (
+                    bubbleProps.status === 'pending' ? undefined : (
                       <ChatbotFooter
                         isEditing={editIndex === index}
                         message={bubbleProps}
@@ -361,8 +376,8 @@ export const Chatbot = sveltify<{
                             ? resolvedUserConfig?.footer
                             : resolvedBotConfig?.footer) as string)
                         }
-                        urlRoot={urlRoot}
-                        urlProxyUrl={urlProxyUrl}
+                        rootUrl={rootUrl}
+                        apiPrefix={apiPrefix}
                         editValues={editValues}
                         index={index}
                         actions={
@@ -386,12 +401,12 @@ export const Chatbot = sveltify<{
                         onLike={handleLike}
                       />
                     ),
-                  messageRender() {
+                  contentRender() {
                     return (
                       <Message
                         index={index}
-                        urlProxyUrl={urlProxyUrl}
-                        urlRoot={urlRoot}
+                        apiPrefix={apiPrefix}
+                        rootUrl={rootUrl}
                         isEditing={editIndex === index}
                         message={bubbleProps}
                         isLastMessage={bubbleProps[lastMessageSymbol] || false}
@@ -402,6 +417,7 @@ export const Chatbot = sveltify<{
                     );
                   },
                 };
+              }
               default:
                 return;
             }
@@ -438,7 +454,7 @@ export const Chatbot = sveltify<{
             ref={chatbotRef}
             className="ms-gr-pro-chatbot-messages"
             autoScroll={false}
-            roles={rolesRender}
+            role={resolvedRole}
             items={resolvedValue}
           />
           {showScrollToBottomButton && showScrollButton && (

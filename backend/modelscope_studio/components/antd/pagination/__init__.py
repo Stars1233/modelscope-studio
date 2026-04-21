@@ -25,7 +25,7 @@ class AntdPagination(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             align: Literal['start', 'center', 'end'] | None = None,
             current: int | None = None,
@@ -43,9 +43,11 @@ class AntdPagination(ModelScopeLayoutComponent):
             show_title: bool = True,
             show_total: str | None = None,
             simple: bool | dict | None = None,
-            size: Literal['small', 'default'] | None = None,
+            size: Literal['small', 'medium', 'large'] | None = None,
             total: int = 0,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -62,7 +64,9 @@ class AntdPagination(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.align = align
         self.current = current
         self.page_size = page_size

@@ -27,7 +27,7 @@ class AntdSegmented(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | int | float | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             block: bool | None = None,
             default_value: str | int | float | None = None,
@@ -36,8 +36,11 @@ class AntdSegmented(ModelScopeDataLayoutComponent):
             size: Literal['large', 'middle', 'small'] | None = None,
             shape: Literal['default', 'round'] | None = None,
             form_name: str | None = None,
+            orientation: Literal['horizontal', 'vertical'] | None = None,
             vertical: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -55,7 +58,9 @@ class AntdSegmented(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.block = block
         self.default_value = default_value
         self.disabled = disabled
@@ -63,6 +68,7 @@ class AntdSegmented(ModelScopeDataLayoutComponent):
         self.size = size
         self.form_name = form_name
         self.shape = shape
+        self.orientation = orientation
         self.vertical = vertical
         self.root_class_name = root_class_name
 

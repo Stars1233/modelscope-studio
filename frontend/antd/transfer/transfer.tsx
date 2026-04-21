@@ -1,6 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React from 'react';
 import { useFunction } from '@utils/hooks/useFunction';
 import { useTargets } from '@utils/hooks/useTargets';
@@ -11,7 +10,6 @@ export const Transfer = sveltify<
   GetProps<typeof ATransfer> & {
     children?: React.ReactNode;
     onValueChange: (value: (string | number)[]) => void;
-    setSlotParams: SetSlotParams;
   },
   [
     'selectionsIcon',
@@ -20,6 +18,7 @@ export const Transfer = sveltify<
     'locale.notFoundContent',
     'selectAllLabels',
     'render',
+    'actions',
   ]
 >(
   ({
@@ -32,11 +31,11 @@ export const Transfer = sveltify<
     locale,
     onChange,
     onValueChange,
-    setSlotParams,
     ...props
   }) => {
     const titles = useTargets(children, 'titles');
     const selectAllLabels = useTargets(children, 'selectAllLabels');
+    const actions = useTargets(children, 'actions');
     const renderFunction = useFunction(render);
     const listStyleFunction = useFunction(listStyle);
     const footerFunction = useFunction(footer);
@@ -47,8 +46,8 @@ export const Transfer = sveltify<
         <ATransfer
           {...props}
           onChange={(targetKeys, ...args) => {
-            onChange?.(targetKeys, ...args);
             onValueChange(targetKeys as (string | number)[]);
+            onChange?.(targetKeys, ...args);
           }}
           selectionsIcon={
             slots.selectionsIcon ? (
@@ -69,7 +68,7 @@ export const Transfer = sveltify<
           }
           render={
             slots.render
-              ? renderParamsSlot({ slots, setSlotParams, key: 'render' })
+              ? renderParamsSlot({ slots, key: 'render' })
               : renderFunction ||
                 ((item) => ({
                   label: item.title || item.label,
@@ -79,7 +78,7 @@ export const Transfer = sveltify<
           filterOption={filterOptionFunction}
           footer={
             slots.footer
-              ? renderParamsSlot({ slots, setSlotParams, key: 'footer' })
+              ? renderParamsSlot({ slots, key: 'footer' })
               : footerFunction || footer
           }
           titles={
@@ -90,6 +89,13 @@ export const Transfer = sveltify<
               : props.titles
           }
           listStyle={listStyleFunction || listStyle}
+          actions={
+            actions.length > 0
+              ? actions.map((target, index) => {
+                  return <ReactSlot slot={target} key={index} />;
+                })
+              : props.actions
+          }
           selectAllLabels={
             selectAllLabels.length > 0
               ? selectAllLabels.map((target, index) => {

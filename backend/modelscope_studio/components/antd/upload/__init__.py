@@ -59,9 +59,9 @@ class AntdUpload(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: list[str] | Callable | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
-            accept: str | None = None,
+            accept: str | dict | None = None,
             action: str | None = None,
             before_upload: str | None = None,
             custom_request: str | None = None,
@@ -87,6 +87,8 @@ class AntdUpload(ModelScopeDataLayoutComponent):
             show_upload_list: bool | dict | None = True,
             with_credentials: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -111,7 +113,9 @@ class AntdUpload(ModelScopeDataLayoutComponent):
                          inputs=inputs,
                          render=render,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.accept = accept
         self.action = action
         self.before_upload = before_upload

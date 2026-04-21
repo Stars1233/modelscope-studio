@@ -33,13 +33,17 @@ interface Window {
 }
 
 interface Element {
-  _reactElement: React.ReactElement;
+  _reactElement: React.ReactElement & {
+    props: Record<string, any>;
+  };
+  _effects: ((props: Record<string, any>) => void)[];
+  _registerEffect: (cb: (props: Record<string, any>) => void) => () => void;
 }
 
 declare module '*.svelte' {
-  import type { ComponentType } from 'svelte';
+  import type { Component } from 'svelte';
 
-  const component: ComponentType;
+  const component: Component;
 
   export default component;
 }

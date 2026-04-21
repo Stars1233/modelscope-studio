@@ -1,12 +1,11 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React, { useMemo } from 'react';
 import {
+  type ConversationItemType,
   Conversations as XConversations,
   type ConversationsProps,
 } from '@ant-design/x';
-import type { Conversation } from '@ant-design/x/es/conversations';
 import type { ConversationsItemProps } from '@ant-design/x/es/conversations/Item';
 import { createFunction } from '@utils/createFunction';
 import { useFunction } from '@utils/hooks/useFunction';
@@ -33,7 +32,10 @@ function getConfig<T>(value: T): Partial<T & Record<PropertyKey, any>> {
   return {} as any;
 }
 
-function patchMenuEvents(menuProps: MenuProps, conversation: Conversation) {
+function patchMenuEvents(
+  menuProps: MenuProps,
+  conversation: ConversationItemType
+) {
   return Object.keys(menuProps).reduce((acc, key) => {
     if (key.startsWith('on') && isFunction(menuProps[key])) {
       const originalEvent = menuProps[key];
@@ -55,29 +57,29 @@ function patchMenuEvents(menuProps: MenuProps, conversation: Conversation) {
 }
 
 export const Conversations = sveltify<
-  ConversationsProps & {
-    setSlotParams: SetSlotParams;
-  },
+  ConversationsProps & {},
   [
     'menu.expandIcon',
     'menu.overflowedIndicator',
     'menu.trigger',
-    'groupable.title',
+    'groupable.label',
   ]
 >(
   withMenuItemsContextProvider(
     ['menu.items'],
     withItemsContextProvider(
       ['default', 'items'],
-      ({ slots, setSlotParams, children, items, ...props }) => {
+      ({ slots, children, items, ...props }) => {
         const {
           items: { 'menu.items': menuItems },
         } = useMenuItems<['menu.items']>();
         const menuFunction = useFunction(props.menu);
         const supportGroupableConfig =
-          typeof props.groupable === 'object' || slots['groupable.title'];
+          typeof props.groupable === 'object' || slots['groupable.label'];
         const groupableConfig = getConfig(props.groupable);
-        const groupableSortFunction = useFunction(props.groupable);
+        const groupableCollapsibleFunction = useFunction(
+          groupableConfig.collapsible
+        );
         const menu: ConversationsProps['menu'] = useMemo(() => {
           if (typeof props.menu === 'string') {
             return menuFunction;
@@ -100,13 +102,13 @@ export const Conversations = sveltify<
                 [],
               trigger: slots['menu.trigger']
                 ? renderParamsSlot(
-                    { slots, setSlotParams, key: 'menu.trigger' },
+                    { slots, key: 'menu.trigger' },
                     { clone: true }
                   )
                 : createFunction(menuProps.trigger, true) || menuProps.trigger,
               expandIcon: slots['menu.expandIcon']
                 ? renderParamsSlot(
-                    { slots, setSlotParams, key: 'menu.expandIcon' },
+                    { slots, key: 'menu.expandIcon' },
                     { clone: true }
                   )
                 : menuProps.expandIcon,
@@ -117,7 +119,7 @@ export const Conversations = sveltify<
               ),
             });
           }
-        }, [menuFunction, menuItems, props.menu, setSlotParams, slots]);
+        }, [menuFunction, menuItems, props.menu, slots]);
         const { items: slotItems } = useItems<['default', 'items']>();
         const resolvedSlotItems =
           slotItems.items.length > 0 ? slotItems.items : slotItems.default;
@@ -152,14 +154,15 @@ export const Conversations = sveltify<
                 supportGroupableConfig
                   ? {
                       ...groupableConfig,
-                      title: slots['groupable.title']
+                      label: slots['groupable.label']
                         ? renderParamsSlot({
                             slots,
-                            setSlotParams,
-                            key: 'groupable.title',
+                            key: 'groupable.label',
                           })
-                        : groupableConfig.title,
-                      sort: groupableSortFunction || groupableConfig.sort,
+                        : groupableConfig.label,
+                      collapsible:
+                        groupableCollapsibleFunction ||
+                        groupableConfig.collapsible,
                     }
                   : props.groupable
               }

@@ -21,16 +21,21 @@ class AntdNotification(ModelScopeLayoutComponent):
     ]
 
     # supported slots
-    SLOTS = ['actions', 'closeIcon', "description", "icon", "message"]
+    SLOTS = [
+        'actions', 'closable.closeIcon', 'closeIcon', "description", "icon",
+        "message", "title"
+    ]
 
     def __init__(
             self,
             message: str | None = "",
             description: str | None = "",
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
+            title: str | None = None,
             type: Literal['success', 'info', 'warning', 'error'] | None = None,
             btn: str | None = None,
+            closable: bool | dict | None = None,
             close_icon: str | bool | None = None,
             duration: int | float | None = 4.5,
             show_progress: bool | None = None,
@@ -46,6 +51,8 @@ class AntdNotification(ModelScopeLayoutComponent):
             stack: bool | dict | None = None,
             top: int | float | None = 24,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -62,11 +69,15 @@ class AntdNotification(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.message = message
+        self.title = title
         self.type = type
         self.description = description
         self.btn = btn
+        self.closable = closable
         self.close_icon = close_icon
         self.duration = duration
         self.show_progress = show_progress

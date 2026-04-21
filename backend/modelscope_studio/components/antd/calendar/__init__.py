@@ -31,7 +31,7 @@ class AntdCalendar(ModelScopeComponent):
     def __init__(
             self,
             value: int | str | float | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             cell_render: str | None = None,
             full_cell_render: str | None = None,
@@ -45,6 +45,8 @@ class AntdCalendar(ModelScopeComponent):
             valid_range: tuple[int | str | float, int | str | float]
         | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -62,7 +64,9 @@ class AntdCalendar(ModelScopeComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.cell_render = cell_render
         self.full_cell_render = full_cell_render
         self.default_value = default_value

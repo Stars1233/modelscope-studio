@@ -24,12 +24,13 @@ class AntdSteps(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             current: int = 0,
             direction: Literal['vertical', 'horizontal'] = "horizontal",
             initial: int = 0,
-            label_placement: Literal['horizontal', 'vertical'] = 'horizontal',
+            label_placement: Literal['horizontal', 'vertical'] | None = None,
+            title_placement: Literal['horizontal', 'vertical'] | None = None,
             percent: int | None = None,
             progress_dot: bool | str = False,
             responsive: bool = True,
@@ -38,6 +39,8 @@ class AntdSteps(ModelScopeLayoutComponent):
             type: Literal['default', 'navigation', 'inline'] = 'default',
             items: list[dict] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -54,11 +57,14 @@ class AntdSteps(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.current = current
         self.direction = direction
         self.initial = initial
         self.label_placement = label_placement
+        self.title_placement = title_placement
         self.percent = percent
         self.progress_dot = progress_dot
         self.responsive = responsive

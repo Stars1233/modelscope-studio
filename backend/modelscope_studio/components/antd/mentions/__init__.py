@@ -48,12 +48,12 @@ class AntdMentions(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | dict | None = None,
             auto_focus: bool | None = None,
             auto_size: bool | dict | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             default_value: str | None = None,
             filter_option: bool | str | None = None,
             disabled: bool | None = None,
@@ -72,6 +72,7 @@ class AntdMentions(ModelScopeDataLayoutComponent):
             variant: Literal['outlined', 'borderless', 'filled', 'underlined']
         | None = None,
             root_class_name: str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -89,7 +90,8 @@ class AntdMentions(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.styles = styles
+        self.additional_props = additional_props
         self.allow_clear = allow_clear
         self.auto_focus = auto_focus
         self.auto_size = auto_size

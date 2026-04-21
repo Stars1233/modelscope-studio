@@ -6,6 +6,7 @@ from gradio.events import EventListener
 
 from ....utils.dev import ModelScopeLayoutComponent, resolve_frontend_dir
 from .item import AntdXThoughtChainItem
+from .thought_chain_item import AntdXThoughtChainThoughtChainItem
 
 
 class AntdXThoughtChain(ModelScopeLayoutComponent):
@@ -14,11 +15,12 @@ class AntdXThoughtChain(ModelScopeLayoutComponent):
     """
 
     Item = AntdXThoughtChainItem
+    ThoughtChainItem = AntdXThoughtChainThoughtChainItem
 
     EVENTS = [
-        EventListener("collapsible_expand",
+        EventListener("expand",
                       callback=lambda block: block._internal.update(
-                          bind_collapsible_expand_event=True),
+                          bind_expand_event=True),
                       doc="Callback function when expanded keys change."),
     ]
 
@@ -27,14 +29,15 @@ class AntdXThoughtChain(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
             *,
-            collapsible: bool | dict | None = None,
+            expanded_keys: list[str] | None = None,
+            default_expanded_keys: list[str] | None = None,
             items: list[dict] | None = None,
-            size: Literal['small', 'middle', 'large'] | None = None,
+            line: bool | Literal['solid', 'dashed', "dotted"] | None = None,
             prefix_cls: str | None = None,
-            styles: dict | None = None,
-            class_names: dict | None = None,
+            additional_props: dict | None = None,
+            styles: dict | str | None = None,
+            class_names: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -52,10 +55,11 @@ class AntdXThoughtChain(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
-        self.collapsible = collapsible
+        self.additional_props = additional_props
         self.items = items
-        self.size = size
+        self.expanded_keys = expanded_keys
+        self.default_expanded_keys = default_expanded_keys
+        self.line = line
         self.prefix_cls = prefix_cls
         self.styles = styles
         self.class_names = class_names

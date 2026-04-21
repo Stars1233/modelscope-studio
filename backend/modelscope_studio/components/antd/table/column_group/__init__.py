@@ -17,8 +17,10 @@ class AntdTableColumnGroup(ModelScopeLayoutComponent):
     def __init__(
             self,
             title: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -35,7 +37,9 @@ class AntdTableColumnGroup(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.title = title
 
     FRONTEND_DIR = resolve_frontend_dir("table", "column-group")

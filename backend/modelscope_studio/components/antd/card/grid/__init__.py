@@ -24,9 +24,11 @@ class AntdCardGrid(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             hoverable: bool | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -47,7 +49,9 @@ class AntdCardGrid(ModelScopeLayoutComponent):
                          elem_style=elem_style,
                          as_item=as_item,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.hoverable = hoverable
 
     FRONTEND_DIR = resolve_frontend_dir("card", "grid")

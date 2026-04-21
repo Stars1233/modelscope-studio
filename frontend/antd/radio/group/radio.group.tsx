@@ -1,5 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
-import { FormItemContext } from '@svelte-preprocess-react/context';
+import { FormItemContext } from '@svelte-preprocess-react/react-contexts';
 import { useMemo } from 'react';
 import { renderItems } from '@utils/renderItems';
 import { type GetProps, Radio as ARadio } from 'antd';
@@ -31,8 +31,8 @@ export const RadioGroup = sveltify<
               );
             }, [optionItems, options])}
             onChange={(e) => {
-              onChange?.(e);
               onValueChange(e.target.value);
+              onChange?.(e);
             }}
           >
             <FormItemContext.Provider value={null}>

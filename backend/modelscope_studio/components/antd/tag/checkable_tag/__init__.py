@@ -29,10 +29,12 @@ class AntdTagCheckableTag(ModelScopeDataLayoutComponent):
             self,
             label: str | None = None,
             value: bool | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             icon: str | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -50,7 +52,9 @@ class AntdTagCheckableTag(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.label = label
         self.icon = icon
         self.root_class_name = root_class_name

@@ -33,7 +33,7 @@ class AntdFloatButton(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             icon: str | None = None,
             description: str | None = None,
@@ -45,6 +45,8 @@ class AntdFloatButton(ModelScopeLayoutComponent):
             html_type: Literal['submit', 'reset', 'button'] | None = 'button',
             badge: dict | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -73,7 +75,9 @@ class AntdFloatButton(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.icon = icon
         self.description = description
         self.tooltip = tooltip

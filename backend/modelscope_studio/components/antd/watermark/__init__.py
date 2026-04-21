@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from gradio.events import EventListener
+
 from ....utils.dev import ModelScopeLayoutComponent, resolve_frontend_dir
 
 
@@ -7,12 +9,16 @@ class AntdWatermark(ModelScopeLayoutComponent):
     """
     Ant Design: https://ant.design/components/watermark
     """
-    EVENTS = []
+    EVENTS = [
+        EventListener("remove",
+                      callback=lambda block: block._internal.update(
+                          bind_remove_event=True)),
+    ]
 
     def __init__(
             self,
             content: str | list[str] | None = "",
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             width: int | float | None = None,
             height: int | float | None = None,
@@ -24,6 +30,8 @@ class AntdWatermark(ModelScopeLayoutComponent):
             gap: list[int | float] | None = None,
             offset: list[int | float] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -40,7 +48,9 @@ class AntdWatermark(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.content = content
         self.width = width
         self.height = height

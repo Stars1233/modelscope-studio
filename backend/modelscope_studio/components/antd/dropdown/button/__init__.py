@@ -42,7 +42,7 @@ class AntdDropdownButton(ModelScopeLayoutComponent):
     def __init__(
             self,
             value: str | None = "Run",
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             arrow: dict | bool | None = None,
             auto_adjust_overflow: bool = True,
@@ -68,8 +68,8 @@ class AntdDropdownButton(ModelScopeLayoutComponent):
             size: Literal["large", "middle", "small"] | None = None,
             type: Literal["primary", "dashed", "link", "text", "default"]
         | None = None,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -87,7 +87,7 @@ class AntdDropdownButton(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.value = value
         self.arrow = arrow
         self.auto_adjust_overflow = auto_adjust_overflow

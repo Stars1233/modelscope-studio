@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any, Literal
 
 from gradio.events import EventListener
@@ -23,7 +24,7 @@ class AntdMenuItem(ModelScopeLayoutComponent):
     def __init__(
             self,
             label: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             title: str | None = None,
             danger: bool | None = None,
@@ -32,6 +33,7 @@ class AntdMenuItem(ModelScopeLayoutComponent):
             icon: str | None = None,
             key: str | None = None,
             theme: Literal['dark', 'light'] = None,
+            theme_value: Literal['dark', 'light'] = None,
             type: Literal['group'] | None = None,
             popup_class_name: str | None = None,
             popup_offset: tuple[int | float, int | float] | None = None,
@@ -52,7 +54,7 @@ class AntdMenuItem(ModelScopeLayoutComponent):
                          elem_style=elem_style,
                          **kwargs)
         self.label = label
-        self.props = props
+        self.additional_props = additional_props
         self.title = title
         self.danger = danger
         self.disabled = disabled
@@ -60,6 +62,11 @@ class AntdMenuItem(ModelScopeLayoutComponent):
         self.icon = icon
         self.key = key
         self.theme = theme
+        if theme:
+            warnings.warn(
+                """<modelscope-studio>[antd.Menu.Item]:  the `theme` property conflicts with Gradio's preset properties. Please use `theme_value` instead."""
+            )
+        self.theme_value = theme_value or theme
         self.type = type
         self.popup_class_name = popup_class_name
         self.popup_offset = popup_offset

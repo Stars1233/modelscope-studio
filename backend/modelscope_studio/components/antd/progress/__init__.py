@@ -15,7 +15,7 @@ class AntdProgress(ModelScopeComponent):
     def __init__(
             self,
             percent: int = 0,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             format: str | None = None,
             show_info: bool | None = None,
@@ -37,7 +37,11 @@ class AntdProgress(ModelScopeComponent):
             gap_degree: int | float | None = None,
             gap_position: Literal['top', 'bottom', 'left', 'right']
         | None = None,
+            gap_placement: Literal['top', 'bottom', 'left', 'right']
+        | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -54,7 +58,9 @@ class AntdProgress(ModelScopeComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.percent = percent
         self.format = format
         self.show_info = show_info
@@ -71,6 +77,7 @@ class AntdProgress(ModelScopeComponent):
         self.stroke_width = stroke_width
         self.gap_degree = gap_degree
         self.gap_position = gap_position
+        self.gap_placement = gap_placement
         self.root_class_name = root_class_name
 
     FRONTEND_DIR = resolve_frontend_dir("progress")

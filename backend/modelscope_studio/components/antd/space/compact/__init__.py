@@ -23,12 +23,14 @@ class AntdSpaceCompact(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             block: bool | None = None,
             direction: Literal['vertical', 'horizontal'] = 'horizontal',
             size: Literal['small', 'middle', 'large'] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -51,7 +53,9 @@ class AntdSpaceCompact(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.block = block
         self.direction = direction
         self.size = size

@@ -1,70 +1,76 @@
-<svelte:options accessors={true} />
-
 <script lang="ts">
   import {
-    bindEvents,
+    getProps,
     importComponent,
+    processProps,
   } from '@svelte-preprocess-react/component';
-  import { getSlotContext, getSlots } from '@svelte-preprocess-react/slot';
-  import type React from 'react';
-  import type { Gradio } from '@gradio/utils';
+  import { getSlots } from '@svelte-preprocess-react/svelte-contexts/slot.svelte';
   import cls from 'classnames';
-  import { writable } from 'svelte/store';
 
   const AwaitedActions = importComponent(() => import('./actions'));
 
-  export let gradio: Gradio;
-  export let props: Record<string, any> = {};
-  const updatedProps = writable(props);
-  $: updatedProps.update((prev) => ({ ...prev, ...props }));
-  export let _internal: {
-    layout?: boolean;
-  } = {};
+  const props = $props();
+  const { gradio, getComponentProps, getAdditionalProps, children } = getProps<{
+    additional_props?: Record<string, any>;
 
-  export let as_item: string | undefined;
-  // gradio properties
-  export let visible = true;
-  export let elem_id = '';
-  export let elem_classes: string[] = [];
-  export let elem_style: React.CSSProperties = {};
+    as_item?: string | undefined;
+    _internal: {
+      layout?: boolean;
+    };
+    dropdown_open_change?: any;
+    dropdown_menu_click?: any;
+    dropdown_menu_deselect?: any;
+    dropdown_menu_open_change?: any;
+    dropdown_menu_select?: any;
+  }>(() => props);
 
-  const [mergedProps, update] = getSlotContext({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
+  const getProceedProps = processProps(
+    () => {
+      const {
+        visible,
+        _internal,
+        as_item,
+        elem_classes,
+        elem_id,
+        elem_style,
+        ...restProps
+      } = getComponentProps();
+      return {
+        gradio,
+        additionalProps: getAdditionalProps(),
+        _internal,
+        as_item,
+        restProps,
+        visible,
+        elem_id,
+        elem_classes,
+        elem_style,
+      };
+    },
+    {
+      dropdown_open_change: 'dropdownProps_openChange',
+      dropdown_menu_click: 'dropdownProps_menu_click',
+      dropdown_menu_deselect: 'dropdownProps_menu_deselect',
+      dropdown_menu_open_change: 'dropdownProps_menu_openChange',
+      dropdown_menu_select: 'dropdownProps_menu_select',
+    }
+  );
+  const proceedProps = $derived(getProceedProps());
+
   const slots = getSlots();
-  $: update({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
 </script>
 
-{#if $mergedProps.visible}
+{#if proceedProps.visible}
   {#await AwaitedActions then Actions}
     <Actions
-      style={$mergedProps.elem_style}
-      className={cls($mergedProps.elem_classes, 'ms-gr-antdx-actions')}
-      id={$mergedProps.elem_id}
-      {...$mergedProps.restProps}
-      {...$mergedProps.props}
-      {...bindEvents($mergedProps)}
-      slots={$slots}
+      style={proceedProps.elem_style}
+      className={cls(proceedProps.elem_classes, 'ms-gr-antdx-actions')}
+      id={proceedProps.elem_id}
+      {...proceedProps.restProps}
+      {...proceedProps.additionalProps}
+      slots={slots.value}
     >
-      <slot></slot>
+      {@render children?.()}
     </Actions>
   {/await}
 {/if}

@@ -1,6 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Attachments as XAttachments,
@@ -11,11 +10,11 @@ import { useFunction } from '@utils/hooks/useFunction';
 import { useTargets } from '@utils/hooks/useTargets';
 import { omitUndefinedProps } from '@utils/omitUndefinedProps';
 import { renderParamsSlot } from '@utils/renderParamsSlot';
-import { type UploadFile } from 'antd';
+import { type ImageProps, type UploadFile } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { noop } from 'lodash-es';
 
-import type { FileCardProps } from './file-card/file-card';
+import type { BaseFileCardProps } from '../file-card/base';
 
 const isUploadFile = (file: FileData | UploadFile): file is UploadFile => {
   return !!(file as UploadFile).name;
@@ -28,13 +27,18 @@ function getConfig<T>(value: T): Partial<T & Record<PropertyKey, any>> {
   return {} as any;
 }
 
+declare module '@ant-design/x' {
+  export interface AttachmentsProps {
+    imageProps?: ImageProps;
+  }
+}
+
 export const Attachments = sveltify<
   Omit<AttachmentsProps, 'items' | 'onChange'> & {
     onValueChange?: (value: FileData[]) => void;
     onChange?: (value: string[]) => void;
     upload: (files: RcFile[]) => Promise<(FileData | null)[]>;
     items: FileData[];
-    setSlotParams: SetSlotParams;
   },
   [
     'showUploadList.extra',
@@ -70,14 +74,26 @@ export const Attachments = sveltify<
     onValueChange,
     onRemove,
     items,
-    setSlotParams,
     placeholder,
     getDropContainer,
     children,
     maxCount,
     imageProps,
+    accept,
     ...props
   }) => {
+    const acceptConfig = getConfig(accept);
+    const acceptFilterFunction = useFunction(acceptConfig.filter, true);
+    const resolvedAccept: typeof accept =
+      typeof accept === 'boolean'
+        ? accept
+        : accept
+          ? {
+              ...acceptConfig,
+              format: acceptConfig.format,
+              filter: acceptFilterFunction || acceptConfig.filter,
+            }
+          : undefined;
     // imageProps
     const previewConfig = getConfig(imageProps?.preview);
     const supportPreview =
@@ -163,7 +179,6 @@ export const Attachments = sveltify<
     }, [fileList]);
     const targets = useTargets(children);
     const uploadDisabled = props.disabled || uploading;
-
     return (
       <>
         <div style={{ display: 'none' }}>
@@ -171,6 +186,7 @@ export const Attachments = sveltify<
         </div>
         <XAttachments
           {...props}
+          accept={resolvedAccept}
           disabled={uploadDisabled}
           imageProps={{
             ...imageProps,
@@ -181,14 +197,12 @@ export const Attachments = sveltify<
                   toolbarRender: slots['imageProps.preview.toolbarRender']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'imageProps.preview.toolbarRender',
                       })
                     : previewToolbarRenderFunction,
                   imageRender: slots['imageProps.preview.imageRender']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'imageProps.preview.imageRender',
                       })
                     : previewImageRenderFunction,
@@ -208,7 +222,7 @@ export const Attachments = sveltify<
                   ) : (
                     previewConfig.closeIcon
                   ),
-                }) as NonNullable<FileCardProps['imageProps']>['preview'])
+                }) as NonNullable<BaseFileCardProps['imageProps']>['preview'])
               : false,
             placeholder: slots['imageProps.placeholder'] ? (
               <ReactSlot slot={slots['imageProps.placeholder']} />
@@ -219,7 +233,7 @@ export const Attachments = sveltify<
           getDropContainer={getDropContainerFunction}
           placeholder={
             slots.placeholder
-              ? renderParamsSlot({ slots, setSlotParams, key: 'placeholder' })
+              ? renderParamsSlot({ slots, key: 'placeholder' })
               : supportPlaceholderConfig
                 ? (...args) => {
                     return {
@@ -227,21 +241,18 @@ export const Attachments = sveltify<
                       icon: slots['placeholder.icon']
                         ? renderParamsSlot({
                             slots,
-                            setSlotParams,
                             key: 'placeholder.icon',
                           })?.(...args)
                         : placeholderConfig.icon,
                       title: slots['placeholder.title']
                         ? renderParamsSlot({
                             slots,
-                            setSlotParams,
                             key: 'placeholder.title',
                           })?.(...args)
                         : placeholderConfig.title,
                       description: slots['placeholder.description']
                         ? renderParamsSlot({
                             slots,
-                            setSlotParams,
                             key: 'placeholder.description',
                           })?.(...args)
                         : placeholderConfig.description,
@@ -255,12 +266,12 @@ export const Attachments = sveltify<
           isImageUrl={isImageUrlFunction}
           itemRender={
             slots.itemRender
-              ? renderParamsSlot({ slots, setSlotParams, key: 'itemRender' })
+              ? renderParamsSlot({ slots, key: 'itemRender' })
               : itemRenderFunction
           }
           iconRender={
             slots.iconRender
-              ? renderParamsSlot({ slots, setSlotParams, key: 'iconRender' })
+              ? renderParamsSlot({ slots, key: 'iconRender' })
               : iconRenderFunction
           }
           maxCount={maxCount}
@@ -380,28 +391,24 @@ export const Attachments = sveltify<
                   downloadIcon: slots['showUploadList.downloadIcon']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'showUploadList.downloadIcon',
                       })
                     : showUploadListConfig.downloadIcon,
                   removeIcon: slots['showUploadList.removeIcon']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'showUploadList.removeIcon',
                       })
                     : showUploadListConfig.removeIcon,
                   previewIcon: slots['showUploadList.previewIcon']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'showUploadList.previewIcon',
                       })
                     : showUploadListConfig.previewIcon,
                   extra: slots['showUploadList.extra']
                     ? renderParamsSlot({
                         slots,
-                        setSlotParams,
                         key: 'showUploadList.extra',
                       })
                     : showUploadListConfig.extra,

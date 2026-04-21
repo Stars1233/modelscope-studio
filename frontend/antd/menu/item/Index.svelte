@@ -1,86 +1,83 @@
-<svelte:options accessors={true} />
-
 <script lang="ts">
   import {
-    bindEvents,
+    getProps,
     importComponent,
+    processProps,
   } from '@svelte-preprocess-react/component';
   import {
-    getSlotContext,
     getSlotKey,
     getSlots,
-  } from '@svelte-preprocess-react/slot';
-  import type React from 'react';
-  import type { Gradio } from '@gradio/utils';
+  } from '@svelte-preprocess-react/svelte-contexts/slot.svelte';
   import cls from 'classnames';
-  import { writable } from 'svelte/store';
 
   const AwaitedMenuItem = importComponent(() => import('./menu.item'));
-  export let gradio: Gradio;
-  export let props: Record<string, any> = {};
-  const updatedProps = writable(props);
-  $: updatedProps.update((prev) => ({ ...prev, ...props }));
-  export let _internal: {
-    layout?: boolean;
-    index?: number;
-  } = {};
 
-  export let as_item: string | undefined;
-
-  // gradio properties
-  export let visible = true;
-  export let elem_id = '';
-  export let elem_classes: string[] = [];
-  export let elem_style: React.CSSProperties = {};
-
+  const props = $props();
+  const { gradio, getComponentProps, getAdditionalProps, children } = getProps<{
+    additional_props?: Record<string, any>;
+    _internal: {
+      layout?: boolean;
+      index?: number;
+    };
+    title_click?: any;
+    theme_value?: any;
+  }>(() => props);
   const slotKey = getSlotKey();
-  const [mergedProps, update] = getSlotContext({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
+
+  const getProceedProps = processProps(
+    () => {
+      const {
+        visible,
+        _internal,
+        as_item,
+        elem_classes,
+        elem_id,
+        elem_style,
+        theme_value,
+        ...restProps
+      } = getComponentProps();
+      return {
+        gradio,
+        additionalProps: getAdditionalProps(),
+        _internal,
+        as_item,
+        restProps,
+        visible,
+        elem_id,
+        elem_classes,
+        elem_style,
+        theme: theme_value,
+      };
+    },
+    {
+      title_click: 'titleClick',
+    }
+  );
+  const proceedProps = $derived(getProceedProps());
+
   const slots = getSlots();
-  $: update({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
 </script>
 
 {#await AwaitedMenuItem then MenuItem}
   <MenuItem
-    style={$mergedProps.elem_style}
-    className={cls($mergedProps.elem_classes)}
-    id={$mergedProps.elem_id}
-    {...$mergedProps.restProps}
-    {...$mergedProps.props}
-    {...bindEvents($mergedProps, {
-      title_click: 'titleClick',
-    })}
+    style={proceedProps.elem_style}
+    className={cls(proceedProps.elem_classes, 'ms-gr-antd-menu-item')}
+    id={proceedProps.elem_id}
+    {...proceedProps.restProps}
+    {...proceedProps.additionalProps}
+    theme={proceedProps.additionalProps.theme || proceedProps.theme}
     slots={{
-      ...$slots,
+      ...slots.value,
       icon: {
-        el: $slots.icon,
+        el: slots.value.icon,
         clone: true,
       },
     }}
-    itemIndex={$mergedProps._internal.index || 0}
-    itemSlotKey={$slotKey}
+    itemIndex={proceedProps._internal.index || 0}
+    itemSlotKey={slotKey?.value}
   >
-    {#if $mergedProps.visible}
-      <slot></slot>
+    {#if proceedProps.visible}
+      {@render children?.()}
     {/if}
   </MenuItem>
 {/await}

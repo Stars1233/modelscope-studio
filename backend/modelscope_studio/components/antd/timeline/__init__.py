@@ -18,14 +18,19 @@ class AntdTimeline(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
-            mode: Literal["left", "alternate", "right"] | None = None,
+            mode: Literal["start", "alternate", "end"] | None = None,
             pending: str | bool | None = None,
             pending_dot: str | None = None,
+            orientation: Literal["horizontal", "vertical"] | None = None,
+            title_span: int | float | str | None = None,
+            variant: Literal["filled", "outlined"] | None = None,
             reverse: bool | None = None,
             items: list[dict] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -42,11 +47,16 @@ class AntdTimeline(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.mode = mode
         self.pending = pending
         self.pending_dot = pending_dot
         self.reverse = reverse
+        self.orientation = orientation
+        self.title_span = title_span
+        self.variant = variant
         self.items = items
         self.root_class_name = root_class_name
 

@@ -32,25 +32,33 @@ class AntdXConversations(ModelScopeLayoutComponent):
         EventListener("menu_select",
                       callback=lambda block: block._internal.update(
                           bind_menu_select_event=True)),
+        EventListener("groupable_expand",
+                      callback=lambda block: block._internal.update(
+                          bind_groupable_expand_event=True)),
+        EventListener("creation_click",
+                      callback=lambda block: block._internal.update(
+                          bind_creation_click_event=True)),
     ]
 
     # supported slots
     SLOTS = [
         'menu.expandIcon', 'menu.overflowedIndicator', 'menu.trigger',
-        'groupable.title', 'items'
+        'groupable.label', 'items', 'creation.icon', 'creation.label'
     ]
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             active_key: str | None = None,
             default_active_key: str | None = None,
             items: list[dict] | None = None,
             menu: str | dict | None = None,
             groupable: bool | dict | None = None,
-            styles: dict | None = None,
-            class_names: dict | None = None,
+            shortcut_keys: dict | None = None,
+            creation: dict | None = None,
+            styles: dict | str | None = None,
+            class_names: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -68,12 +76,14 @@ class AntdXConversations(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.active_key = active_key
         self.default_active_key = default_active_key
         self.items = items
         self.menu = menu
         self.groupable = groupable
+        self.shortcut_keys = shortcut_keys
+        self.creation = creation
         self.styles = styles
         self.class_names = class_names
         self.root_class_name = root_class_name

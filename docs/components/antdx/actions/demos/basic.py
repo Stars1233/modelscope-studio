@@ -18,33 +18,33 @@ with gr.Blocks() as demo:
     with ms.Application():
         with antdx.XProvider():
             with antdx.Actions() as actions:
-                with antdx.Actions.Item(key="retry", label="Retry"):
+                with antdx.Actions.ActionItem(key="retry", label="Retry"):
                     with ms.Slot("icon"):
                         antd.Icon("RedoOutlined")
-                with antdx.Actions.Item(key="copy", label="Copy"):
-                    with ms.Slot("icon"):
-                        antd.Icon("CopyOutlined")
-            antd.Divider("More Menu Items")
+                with antdx.Actions.ActionItem(key="copy", label="Copy"):
+                    with ms.Slot("actionRender"):
+                        antdx.Actions.Copy(text="Copy Text")
+            antd.Divider("More Menu ActionItems")
             with antdx.Actions() as actions2:
-                with antdx.Actions.Item(key="retry", label="Retry"):
+                with antdx.Actions.ActionItem(key="retry", label="Retry"):
                     with ms.Slot("icon"):
                         antd.Icon("RedoOutlined")
-                with antdx.Actions.Item(key="copy", label="Copy"):
+                with antdx.Actions.ActionItem(key="copy", label="Copy"):
                     with ms.Slot("icon"):
                         antd.Icon("CopyOutlined")
-                with antdx.Actions.Item(key="more"):
-                    with antdx.Actions.Item(key="share", label="Share"):
-                        with ms.Slot("icon"):
-                            antd.Icon("ShareAltOutlined")
-                        antdx.Actions.Item(key="qq", label="QQ")
-                        antdx.Actions.Item(key="wechat", label="WeChat")
-                    antdx.Actions.Item(key="import", label="Import")
-                    with antdx.Actions.Item(
-                            key="delete", label="Delete",
-                            danger=True) as actions_delete_item:
-                        with ms.Slot("icon"):
-                            antd.Icon("DeleteOutlined")
-                with antdx.Actions.Item(key="clear", label="Clear"):
+                with antdx.Actions.ActionItem(key="more"):
+                    with ms.Slot("subItems"):
+                        with antdx.Actions.ActionItem(key="share",
+                                                      label="Share"):
+                            with ms.Slot("icon"):
+                                antd.Icon("ShareAltOutlined")
+                        antdx.Actions.ActionItem(key="import", label="Import")
+                        with antdx.Actions.ActionItem(
+                                key="delete", label="Delete",
+                                danger=True) as actions_delete_item:
+                            with ms.Slot("icon"):
+                                antd.Icon("DeleteOutlined")
+                with antdx.Actions.ActionItem(key="clear", label="Clear"):
                     with ms.Slot("icon"):
                         antd.Icon("ClearOutlined")
 

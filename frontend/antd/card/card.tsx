@@ -1,6 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React, { useMemo } from 'react';
 import { useFunction } from '@utils/hooks/useFunction';
 import { useTargets } from '@utils/hooks/useTargets';
@@ -17,7 +16,6 @@ import {
 export const Card = sveltify<
   GetProps<typeof ACard> & {
     containsGrid?: boolean;
-    setSlotParams: SetSlotParams;
   },
   [
     'actions',
@@ -38,15 +36,7 @@ export const Card = sveltify<
 >(
   withTabsItemsContextProvider(
     ['tabList'],
-    ({
-      children,
-      containsGrid,
-      slots,
-      tabList,
-      tabProps,
-      setSlotParams,
-      ...props
-    }) => {
+    ({ children, containsGrid, slots, tabList, tabProps, ...props }) => {
       const targets = useTargets(children, 'actions');
       const {
         items: { tabList: tabListItems },
@@ -71,7 +61,6 @@ export const Card = sveltify<
             renderTabBar: slots['tabProps.renderTabBar']
               ? renderParamsSlot({
                   slots,
-                  setSlotParams,
                   key: 'tabProps.renderTabBar',
                 })
               : renderTabBarFunction,

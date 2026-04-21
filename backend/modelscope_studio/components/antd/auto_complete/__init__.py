@@ -40,6 +40,9 @@ class AntdAutoComplete(ModelScopeDataLayoutComponent):
         EventListener("popup_visible_change",
                       callback=lambda block: block._internal.update(
                           bind_popupVisibleChange_event=True)),
+        EventListener("show_search_search",
+                      callback=lambda block: block._internal.update(
+                          bind_showSearch_search_event=True)),
     ]
 
     # supported slots
@@ -51,7 +54,7 @@ class AntdAutoComplete(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | dict = False,
             auto_focus: bool | None = None,
@@ -76,8 +79,9 @@ class AntdAutoComplete(ModelScopeDataLayoutComponent):
             status: Literal['error', 'warning'] | None = None,
             variant: Literal['outlined', 'borderless', 'filled']
         | None = None,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            show_search: bool | dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -96,7 +100,7 @@ class AntdAutoComplete(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.allow_clear = allow_clear
         self.auto_focus = auto_focus
         self.backfill = backfill
@@ -118,6 +122,7 @@ class AntdAutoComplete(ModelScopeDataLayoutComponent):
         self.variant = variant
         self.placement = placement
         self.size = size
+        self.show_search = show_search
         self.class_names = class_names
         self.styles = styles
         self.root_class_name = root_class_name

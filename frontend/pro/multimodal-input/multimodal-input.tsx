@@ -1,7 +1,6 @@
 import { sveltify } from '@svelte-preprocess-react';
-import { useSuggestionOpenContext } from '@svelte-preprocess-react/context';
+import { useSuggestionOpenContext } from '@svelte-preprocess-react/react-contexts';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import {
@@ -12,6 +11,7 @@ import {
 } from '@ant-design/x';
 import { type FileData } from '@gradio/client';
 import { convertObjectKeyToCamelCase } from '@utils/convertToCamelCase';
+import { createFunction } from '@utils/createFunction';
 import { useFunction } from '@utils/hooks/useFunction';
 import { useMemoizedFn } from '@utils/hooks/useMemoizedFn';
 import { useValueChange } from '@utils/hooks/useValueChange';
@@ -65,6 +65,13 @@ const formatChangedValue = (
   };
 };
 
+function getConfig<T>(value: T): Partial<T & Record<PropertyKey, any>> {
+  if (typeof value === 'object' && value !== null) {
+    return value as any;
+  }
+  return {} as any;
+}
+
 export const MultimodalInput = sveltify<
   Omit<
     SenderProps &
@@ -75,7 +82,6 @@ export const MultimodalInput = sveltify<
     'onPasteFile' | 'value' | 'onSubmit'
   > & {
     children?: React.ReactNode;
-    setSlotParams: SetSlotParams;
     value?: MultimodalInputValue;
     mode?: 'inline' | 'block';
     upload: (files: File[]) => Promise<FileData[]>;
@@ -86,7 +92,15 @@ export const MultimodalInput = sveltify<
     onSubmit?: (value: MultimodalInputChangedValue) => void;
     uploadConfig?: UploadConfig;
   },
-  ['actions', 'header', 'prefix', 'footer']
+  [
+    'suffix',
+    'header',
+    'prefix',
+    'footer',
+    'skill.title',
+    'skill.toolTip.title',
+    'skill.closable.closeIcon',
+  ]
 >(
   ({
     onValueChange,
@@ -108,7 +122,7 @@ export const MultimodalInput = sveltify<
     elRef,
     slots,
     mode,
-    // setSlotParams,
+    slotConfig,
     uploadConfig: uploadConfigProp,
     value: valueProp,
     ...senderProps
@@ -117,8 +131,29 @@ export const MultimodalInput = sveltify<
     const suggestionOpen = useSuggestionOpenContext();
     const recorderContainerRef = useRef<HTMLDivElement | null>(null);
     const [uploading, setUploading] = useState(false);
-    const actionsFunction = useFunction(senderProps.actions, true);
+    const suffixFunction = useFunction(senderProps.suffix, true);
+    const headerFunction = useFunction(senderProps.header, true);
+    const prefixFunction = useFunction(senderProps.prefix, true);
     const footerFunction = useFunction(senderProps.footer, true);
+    const supportSkill =
+      senderProps.skill ||
+      slots['skill.title'] ||
+      slots['skill.toolTip.title'] ||
+      slots['skill.closable.closeIcon'];
+    const supportSkillTooltip =
+      slots['skill.toolTip.title'] ||
+      typeof senderProps.skill?.toolTip === 'object';
+    const skillTooltipConfig = getConfig(senderProps.skill?.toolTip);
+    const supportSkillClosable =
+      slots['skill.closable.closeIcon'] || senderProps.skill?.closable;
+    const skillClosableConfig = getConfig(senderProps.skill?.closable);
+
+    const skillTooltipAfterOpenChangeFunction = useFunction(
+      skillTooltipConfig.afterOpenChange
+    );
+    const skillTooltipGetPopupContainerFunction = useFunction(
+      skillTooltipConfig.getPopupContainer
+    );
     const { start, stop, recording } = useRecorder({
       container: recorderContainerRef.current,
       async onStop(blob) {
@@ -142,6 +177,19 @@ export const MultimodalInput = sveltify<
     );
     const uploadDisabled =
       disabled || uploadConfig?.disabled || loading || readOnly || uploading;
+    const accept = uploadConfig?.accept;
+    const acceptConfig = getConfig(accept);
+    const acceptFilterFunction = useFunction(acceptConfig.filter, true);
+    const resolvedAccept: typeof accept =
+      typeof accept === 'boolean'
+        ? accept
+        : accept
+          ? {
+              ...acceptConfig,
+              format: acceptConfig.format,
+              filter: acceptFilterFunction || acceptConfig.filter,
+            }
+          : undefined;
 
     const uploadFile = useMemoizedFn(async (file: File | File[]) => {
       try {
@@ -314,7 +362,7 @@ export const MultimodalInput = sveltify<
             onChange?.(formatChangedValue(newValue));
             setValue(newValue);
           }}
-          onPasteFile={async (_file, files) => {
+          onPasteFile={async (files) => {
             if (!(allowPasteFile ?? true)) {
               return;
             }
@@ -323,24 +371,74 @@ export const MultimodalInput = sveltify<
               onPasteFile?.(filesData.map((url) => url.path));
             }
           }}
+          skill={
+            supportSkill
+              ? {
+                  ...(senderProps.skill || {}),
+                  title: slots['skill.title'] ? (
+                    <ReactSlot slot={slots['skill.title']} />
+                  ) : (
+                    senderProps.skill?.title
+                  ),
+                  value: senderProps.skill?.value || '',
+                  toolTip: supportSkillTooltip
+                    ? {
+                        ...skillTooltipConfig,
+                        afterOpenChange: skillTooltipAfterOpenChangeFunction,
+                        getPopupContainer:
+                          skillTooltipGetPopupContainerFunction,
+                        title: slots['showSorterTooltip.title'] ? (
+                          <ReactSlot slot={slots['showSorterTooltip.title']} />
+                        ) : (
+                          skillTooltipConfig.title
+                        ),
+                      }
+                    : senderProps.skill?.toolTip,
+                  closable: supportSkillClosable
+                    ? {
+                        ...skillClosableConfig,
+                        closeIcon: slots['skill.closable.closeIcon'] ? (
+                          <ReactSlot slot={slots['skill.closable.closeIcon']} />
+                        ) : (
+                          skillClosableConfig.closeIcon
+                        ),
+                      }
+                    : senderProps.skill?.closable,
+                }
+              : undefined
+          }
+          slotConfig={slotConfig?.map((c) => {
+            return {
+              ...c,
+              formatResult: createFunction(c.formatResult),
+              customRender:
+                c.type === 'custom'
+                  ? createFunction(c.customRender)
+                  : undefined,
+            };
+          })}
+          suffix={
+            mode === 'block' ? (
+              false
+            ) : slots.suffix ? (
+              <ReactSlot slot={slots.suffix} />
+            ) : (
+              suffixFunction || senderProps.suffix
+            )
+          }
           prefix={
             <>
               {allowUpload && mode !== 'block' ? uploadHandlerNode : null}
-              {slots.prefix ? <ReactSlot slot={slots.prefix} /> : null}
+              {slots.prefix ? (
+                <ReactSlot slot={slots.prefix} />
+              ) : (
+                prefixFunction || senderProps.prefix
+              )}
             </>
-          }
-          actions={
-            mode === 'block' ? (
-              false
-            ) : slots.actions ? (
-              <ReactSlot slot={slots.actions} />
-            ) : (
-              actionsFunction || senderProps.actions
-            )
           }
           footer={
             mode === 'block' ? (
-              ({ components }) => {
+              (_oriNode, { components }) => {
                 const { SendButton, SpeechButton, LoadingButton } = components;
 
                 return (
@@ -388,6 +486,7 @@ export const MultimodalInput = sveltify<
                     ]),
                     { omitNull: true }
                   )}
+                  accept={resolvedAccept}
                   imageProps={{
                     ...uploadConfig?.imageProps,
                   }}
@@ -521,7 +620,7 @@ export const MultimodalInput = sveltify<
             ) : slots.header ? (
               <ReactSlot slot={slots.header} />
             ) : (
-              senderProps.header
+              headerFunction || senderProps.header
             )
           }
         />

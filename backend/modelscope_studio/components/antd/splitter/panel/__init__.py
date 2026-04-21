@@ -19,7 +19,7 @@ class AntdSplitterPanel(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             default_size: str | int | None = None,
             min: int | str | None = None,
@@ -28,6 +28,8 @@ class AntdSplitterPanel(ModelScopeLayoutComponent):
             collapsible: bool | dict | None = None,
             resizable: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -53,7 +55,9 @@ class AntdSplitterPanel(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.default_size = default_size
         self.min = min
         self.max = max

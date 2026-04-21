@@ -27,7 +27,7 @@ class AntdInputOTP(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             default_value: str | None = None,
             disabled: bool | None = None,
@@ -42,6 +42,8 @@ class AntdInputOTP(ModelScopeDataLayoutComponent):
             variant: Literal['outlined', 'borderless', 'filled', 'underlined']
         | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -59,7 +61,9 @@ class AntdInputOTP(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.default_value = default_value
         self.separator = separator
         self.disabled = disabled

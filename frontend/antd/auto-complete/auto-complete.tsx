@@ -1,7 +1,6 @@
 import { sveltify } from '@svelte-preprocess-react';
-import { AutoCompleteContext } from '@svelte-preprocess-react/context';
+import { AutoCompleteContext } from '@svelte-preprocess-react/react-contexts';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import { forwardRef, useMemo } from 'react';
 import { useFunction } from '@utils/hooks/useFunction';
 import { useValueChange } from '@utils/hooks/useValueChange';
@@ -30,10 +29,16 @@ const AutoCompleteChildrenWrapper = forwardRef<
   );
 });
 
+function getConfig<T>(value: T): Partial<T & Record<PropertyKey, any>> {
+  if (typeof value === 'object' && value !== null) {
+    return value as any;
+  }
+  return {} as any;
+}
+
 export const AutoComplete = sveltify<
   GetProps<typeof AAutoComplete> & {
     onValueChange: (value: string) => void;
-    setSlotParams: SetSlotParams;
   },
   [
     'allowClear.clearIcon',
@@ -55,10 +60,15 @@ export const AutoComplete = sveltify<
       getPopupContainer,
       dropdownRender,
       popupRender,
+      showSearch,
       elRef,
-      setSlotParams,
       ...props
     }) => {
+      const showSearchConfig = getConfig(showSearch);
+      const showSearchConfigFilterOption = useFunction(
+        showSearchConfig.filterOption
+      );
+
       const getPopupContainerFunction = useFunction(getPopupContainer);
       const filterOptionFunction = useFunction(filterOption);
       const dropdownRenderFunction = useFunction(dropdownRender);
@@ -78,6 +88,16 @@ export const AutoComplete = sveltify<
 
           <AAutoComplete
             {...props}
+            showSearch={
+              typeof showSearch === 'boolean'
+                ? showSearch
+                : typeof showSearch === 'object'
+                  ? {
+                      ...showSearchConfig,
+                      filterOption: showSearchConfigFilterOption,
+                    }
+                  : undefined
+            }
             value={value}
             ref={elRef}
             allowClear={
@@ -119,7 +139,6 @@ export const AutoComplete = sveltify<
                 ? renderParamsSlot(
                     {
                       slots,
-                      setSlotParams,
                       key: 'popupRender',
                     },
                     { clone: true }
@@ -131,7 +150,6 @@ export const AutoComplete = sveltify<
                 ? renderParamsSlot(
                     {
                       slots,
-                      setSlotParams,
                       key: 'dropdownRender',
                     },
                     { clone: true }

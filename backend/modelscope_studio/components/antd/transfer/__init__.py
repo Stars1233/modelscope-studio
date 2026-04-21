@@ -31,14 +31,15 @@ class AntdTransfer(ModelScopeDataLayoutComponent):
     # supported slots
     SLOTS = [
         'selectionsIcon', 'titles', 'footer', 'locale.notFoundContent',
-        'selectAllLabels', 'render'
+        'selectAllLabels', 'render', 'actions'
     ]
 
     def __init__(
             self,
             value: list[float | int | str] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
+            actions: list[str] | None = None,
             data_source: list[dict] | None = None,
             disabled: bool | None = None,
             selections_icon: str | None = None,
@@ -59,6 +60,8 @@ class AntdTransfer(ModelScopeDataLayoutComponent):
             target_keys: list[str] | list[int | float] | None = None,
             titles: list[str] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -78,7 +81,10 @@ class AntdTransfer(ModelScopeDataLayoutComponent):
                          key=key,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
+        self.actions = actions
         self.data_source = data_source
         self.disabled = disabled
         self.selections_icon = selections_icon

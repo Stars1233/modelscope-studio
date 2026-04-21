@@ -25,7 +25,7 @@ class AntdCollapse(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             accordion: bool | None = None,
             active_key: str | float | list[int | float] | list[str]
@@ -38,10 +38,13 @@ class AntdCollapse(ModelScopeLayoutComponent):
             destroy_on_hidden: bool | None = None,
             expand_icon: str | None = None,
             expand_icon_position: Literal['start', 'end'] | None = None,
+            expand_icon_placement: Literal['start', 'end'] | None = None,
             ghost: bool | None = None,
             items: list[dict] | None = None,
             size: Literal['large', 'middle', 'small'] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -58,7 +61,9 @@ class AntdCollapse(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.accordion = accordion
         self.active_key = active_key
         self.bordered = bordered
@@ -68,6 +73,7 @@ class AntdCollapse(ModelScopeLayoutComponent):
         self.destroy_inactive_panel = destroy_inactive_panel
         self.expand_icon = expand_icon
         self.expand_icon_position = expand_icon_position
+        self.expand_icon_placement = expand_icon_placement
         self.ghost = ghost
         self.items = items
         self.size = size

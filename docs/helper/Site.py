@@ -32,6 +32,7 @@ class Site:
                 if key in tab_docs:
                     with antd.Tabs.Item(
                             key=key,
+                            additional_props=dict(ms_auto_loading=False),
                             visible=True if tab.get("default_active_key")
                             == key else False) as docs_tab:
                         docs_tabs.append(docs_tab)
@@ -57,20 +58,22 @@ class Site:
         for category in self.docs:
             for component in self.docs[category]:
                 css += self.docs[category][component].get_css()
-        with gr.Blocks(css=css + """
+        css = css + """
 .gradio-container {
   max-width: 100% !important;
   padding: 0 !important;
 }
-.gradio-container > main.fillable {
+.gradio-container > .main.fillable {
   max-width: 100% !important;
   padding: 0 !important;
+  margin:0 !important;
 }
 .docs-layout-sider {
   width: 100% !important;
   max-width: 100% !important;
 }
-""") as demo:
+"""
+        with gr.Blocks() as demo:
             with ms.Application() as app:
                 with antd.ConfigProvider():
                     with antd.Layout(elem_style=dict(
@@ -105,6 +108,8 @@ class Site:
                                 for tab in self.tabs:
                                     with antd.Tabs.Item(
                                             key=tab["key"],
+                                            additional_props=dict(
+                                                ms_auto_loading=False),
                                             elem_style=dict(
                                                 height=
                                                 "calc(100vh - var(--size-4) - var(--body-text-size) * 1.5 - 64px)"
@@ -167,7 +172,10 @@ class Site:
                                                                 else:
                                                                     tab["extra_menu_footer"].render(
                                                                     )
-                                                    with antd.Splitter.Panel():
+                                                    with antd.Splitter.Panel(
+                                                            elem_style=dict(
+                                                                overflow="auto"
+                                                            )):
                                                         with antd.Layout(
                                                                 elem_style=dict(
                                                                     width=
@@ -251,4 +259,4 @@ class Site:
                         tab_menu.select(
                             fn=on_tab_menu_select,
                             outputs=[tab_menu, tabs, *tab_components])
-        return demo
+        return demo, css

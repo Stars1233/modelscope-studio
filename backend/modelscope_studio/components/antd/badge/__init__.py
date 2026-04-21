@@ -20,10 +20,10 @@ class AntdBadge(ModelScopeLayoutComponent):
     def __init__(
             self,
             count: int | float | str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             color: str | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             dot: bool | None = None,
             offset: tuple[int | float, int | float] | None = None,
             overflow_count: int = 99,
@@ -33,7 +33,7 @@ class AntdBadge(ModelScopeLayoutComponent):
                             'warning'] | None = None,
             text: str | None = None,
             title: str | None = None,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -64,7 +64,7 @@ class AntdBadge(ModelScopeLayoutComponent):
         self.title = title
         self.styles = styles
         self.root_class_name = root_class_name
-        self.props = props
+        self.additional_props = additional_props
 
     FRONTEND_DIR = resolve_frontend_dir("badge")
 

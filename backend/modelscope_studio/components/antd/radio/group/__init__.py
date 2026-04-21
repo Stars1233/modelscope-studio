@@ -26,7 +26,7 @@ class AntdRadioGroup(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: Any | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             button_style: Literal['outline', 'solid'] | None = None,
             default_value: Any | None = None,
@@ -36,7 +36,10 @@ class AntdRadioGroup(ModelScopeDataLayoutComponent):
             option_type: Literal['default', 'button'] | None = None,
             size: Literal['small', 'middle', 'large'] | None = None,
             block: bool | None = None,
+            vertical: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -54,7 +57,9 @@ class AntdRadioGroup(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.button_style = button_style
         self.default_value = default_value
         self.disabled = disabled
@@ -64,6 +69,7 @@ class AntdRadioGroup(ModelScopeDataLayoutComponent):
         self.size = size
         self.block = block
         self.root_class_name = root_class_name
+        self.vertical = vertical
 
     FRONTEND_DIR = resolve_frontend_dir("radio", "group")
 

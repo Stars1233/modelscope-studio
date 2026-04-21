@@ -52,7 +52,7 @@ class AntdTreeSelect(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | list[str] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | dict | None = None,
             auto_clear_search_value: bool | None = True,
@@ -106,8 +106,8 @@ class AntdTreeSelect(ModelScopeDataLayoutComponent):
             variant: Literal['outlined', 'borderless', 'solid', 'underlined']
         | None = None,
             virtual: bool | None = True,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -126,7 +126,7 @@ class AntdTreeSelect(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.allow_clear = allow_clear
         self.auto_focus = auto_focus
         self.auto_clear_search_value = auto_clear_search_value

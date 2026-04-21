@@ -24,7 +24,7 @@ class AntdQRCode(ModelScopeComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             type: Literal['canvas', 'svg'] | None = 'canvas',
             bordered: bool = True,
@@ -34,11 +34,14 @@ class AntdQRCode(ModelScopeComponent):
             error_level: Literal['L', 'M', 'Q', 'H'] | None = 'M',
             icon: str | None = None,
             icon_size: int | dict | None = 40,
+            margin_size: int | float | None = None,
             size: int = 160,
             status: Literal['active', 'expired', 'loading', 'scanned']
         | None = 'active',
             status_render: str | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -56,7 +59,9 @@ class AntdQRCode(ModelScopeComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.type = type
         self.bordered = bordered
         self.color = color
@@ -65,6 +70,7 @@ class AntdQRCode(ModelScopeComponent):
         self.error_level = error_level
         self.icon = icon
         self.icon_size = icon_size
+        self.margin_size = margin_size
         self.size = size
         self.status = status
         self.status_render = status_render

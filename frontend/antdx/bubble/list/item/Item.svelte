@@ -1,143 +1,149 @@
-<svelte:options accessors={true} />
-
 <script lang="ts">
   import {
-    bindEvents,
+    getProps,
     importComponent,
+    processProps,
   } from '@svelte-preprocess-react/component';
   import {
-    getSetSlotParamsFn,
-    getSlotContext,
     getSlotKey,
     getSlots,
-  } from '@svelte-preprocess-react/slot';
-  import type React from 'react';
-  import type { Gradio } from '@gradio/utils';
+  } from '@svelte-preprocess-react/svelte-contexts/slot.svelte';
   import { createFunction } from '@utils/createFunction';
-  import { renderSlot } from '@utils/renderSlot';
   import cls from 'classnames';
-  import { writable } from 'svelte/store';
 
   const AwaitedBubbleListItem = importComponent(
     () => import('./bubble.list.item')
   );
-  export let gradio: Gradio;
-  export let props: Record<string, any> = {};
-  const updatedProps = writable(props);
-  $: updatedProps.update((prev) => ({ ...prev, ...props }));
-  export let _internal: Record<string, any> = {};
-  export let as_item: string | undefined;
-  // gradio properties
-  export let visible = true;
-  export let elem_id = '';
-  export let elem_classes: string[] = [];
-  export let elem_style: React.CSSProperties = {};
 
+  const props = $props();
+  const { gradio, getComponentProps, getAdditionalProps, children } = getProps<{
+    additional_props?: Record<string, any>;
+    as_item?: string | undefined;
+    _internal: {
+      index?: number;
+    };
+    content?: string;
+    avatar?: string;
+    editable?: any;
+    loadingRender?: string;
+    contentRender?: string;
+    typing_complete?: any;
+    edit_confirm?: any;
+    edit_cancel?: any;
+  }>(() => props);
   const slotKey = getSlotKey();
-  const [mergedProps, update] = getSlotContext({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
-  const setSlotParams = getSetSlotParamsFn();
-  const slots = getSlots();
-  $: update({
-    gradio,
-    props: $updatedProps,
-    _internal,
-    visible,
-    elem_id,
-    elem_classes,
-    elem_style,
-    as_item,
-    restProps: $$restProps,
-  });
 
-  let itemProps = {
-    props: {},
-    slots: {},
-  };
-
-  $: {
-    let avatar = $mergedProps.props.avatar || $mergedProps.restProps.avatar;
-    if ($slots.avatar) {
-      avatar = renderSlot($slots.avatar);
-    } else if ($slots['avatar.icon'] || $slots['avatar.src']) {
-      avatar = {
-        ...(avatar || {}),
-        icon: $slots['avatar.icon']
-          ? renderSlot($slots['avatar.icon'])
-          : avatar?.icon,
-        src: $slots['avatar.src']
-          ? renderSlot($slots['avatar.src'])
-          : avatar?.src,
+  const getProceedProps = processProps(
+    () => {
+      const {
+        visible,
+        _internal,
+        as_item,
+        elem_classes,
+        elem_id,
+        elem_style,
+        ...restProps
+      } = getComponentProps();
+      return {
+        gradio,
+        additionalProps: getAdditionalProps(),
+        _internal,
+        as_item,
+        restProps,
+        visible,
+        elem_id,
+        elem_classes,
+        elem_style,
       };
+    },
+    {
+      typing_complete: 'typingComplete',
+      edit_confirm: 'editConfirm',
+      edit_cancel: 'editCancel',
     }
+  );
+  const proceedProps = $derived(getProceedProps());
 
-    itemProps = {
+  const slots = getSlots();
+
+  const itemProps = $derived.by(() => {
+    const editable =
+      proceedProps.additionalProps.editable || proceedProps.restProps.editable;
+    return {
       props: {
-        style: $mergedProps.elem_style,
+        style: proceedProps.elem_style,
         className: cls(
-          $mergedProps.elem_classes,
-          'ms-gr-antdx-bubble-list-role'
+          proceedProps.elem_classes,
+          'ms-gr-antdx-bubble-list-item'
         ),
-        id: $mergedProps.elem_id,
-        ...$mergedProps.restProps,
-        ...$mergedProps.props,
-        ...bindEvents($mergedProps, {
-          typing_complete: 'typingComplete',
-        }),
-        avatar,
+        id: proceedProps.elem_id,
+        ...proceedProps.restProps,
+        ...proceedProps.additionalProps,
+        editable:
+          typeof editable === 'boolean'
+            ? {
+                editing: editable,
+              }
+            : editable,
+        content:
+          proceedProps.additionalProps.content ||
+          proceedProps.restProps.content ||
+          '',
         loadingRender: createFunction(
-          $mergedProps.props.loadingRender ||
-            $mergedProps.restProps.loadingRender
+          proceedProps.additionalProps.loadingRender ||
+            proceedProps.restProps.loadingRender
         ),
-        messageRender: createFunction(
-          $mergedProps.props.messageRender ||
-            $mergedProps.restProps.messageRender
+        contentRender: createFunction(
+          proceedProps.additionalProps.contentRender ||
+            proceedProps.restProps.contentRender
         ),
       },
       slots: {
-        ...$slots,
-        avatar: undefined,
-        'avatar.icon': undefined,
-        'avatar.src': undefined,
+        ...slots.value,
+        loadingRender: {
+          el: slots.value.loadingRender,
+          clone: true,
+          withParams: true,
+        },
+        avatar: {
+          el: slots.value.avatar,
+          clone: true,
+          withParams: true,
+        },
         header: {
-          el: $slots.header,
-          callback: setSlotParams,
+          el: slots.value.header,
+          clone: true,
+          withParams: true,
         },
         footer: {
-          el: $slots.footer,
-          callback: setSlotParams,
+          el: slots.value.footer,
+          clone: true,
+          withParams: true,
         },
-        loadingRender: {
-          el: $slots.loadingRender,
-          callback: setSlotParams,
+        extra: {
+          el: slots.value.extra,
+          clone: true,
+          withParams: true,
         },
-        messageRender: {
-          el: $slots.messageRender,
-          callback: setSlotParams,
+        contentRender: {
+          el: slots.value.contentRender,
+          clone: true,
+          withParams: true,
         },
       },
     };
-  }
+  });
 </script>
 
 {#await AwaitedBubbleListItem then BubbleListItem}
   <BubbleListItem
     {...itemProps.props}
     slots={itemProps.slots}
-    itemIndex={$mergedProps._internal.index || 0}
-    itemSlotKey={$slotKey}
+    itemIndex={proceedProps._internal.index || 0}
+    itemSlotKey={slotKey?.value}
   >
-    {#if $mergedProps.visible}
-      <slot></slot>
+    {#if proceedProps.visible}
+      {@render children?.()}
     {/if}
   </BubbleListItem>
 {/await}

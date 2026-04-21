@@ -36,15 +36,23 @@ class AntdSplitter(ModelScopeLayoutComponent):
                       doc="Callback when expanding or collapsing.",
                       callback=lambda block: block._internal.update(
                           bind_collapse_event=True)),
+        EventListener("dragger_double_click",
+                      doc="Callback when dragger double clicked.",
+                      callback=lambda block: block._internal.update(
+                          bind_draggerDoubleClick_event=True)),
     ]
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             layout: Literal['horizontal', 'vertical'] | None = 'horizontal',
+            orientation: Literal['horizontal', 'vertical'] | None = None,
+            vertical: bool | None = None,
             lazy: bool | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -54,10 +62,6 @@ class AntdSplitter(ModelScopeLayoutComponent):
             elem_style: dict | None = None,
             render: bool = True,
             **kwargs):
-        """
-        Parameters:
-            layout: Layout direction.
-        """
         super().__init__(visible=visible,
                          elem_id=elem_id,
                          elem_classes=elem_classes,
@@ -65,8 +69,12 @@ class AntdSplitter(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.layout = layout
+        self.vertical = vertical
+        self.orientation = orientation
         self.lazy = lazy
         self.root_class_name = root_class_name
 

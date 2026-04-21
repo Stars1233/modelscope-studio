@@ -27,12 +27,14 @@ class AntdIcon(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | None = "GithubOutlined",
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             spin: bool | None = None,
             rotate: int | float | None = None,
             two_tone_color: str | None = None,
             component: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -57,7 +59,9 @@ class AntdIcon(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.spin = spin
         self.rotate = rotate
         self.component = component

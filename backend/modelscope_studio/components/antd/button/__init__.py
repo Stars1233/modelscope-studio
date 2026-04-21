@@ -51,11 +51,11 @@ class AntdButton(ModelScopeLayoutComponent):
     def __init__(
             self,
             value: str | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             auto_insert_space: bool = True,
             block: bool | None = None,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             danger: bool | None = None,
             disabled: bool | None = None,
             ghost: bool | None = None,
@@ -63,10 +63,11 @@ class AntdButton(ModelScopeLayoutComponent):
             html_type: Literal["button", "submit", "reset"] | None = None,
             icon: str | None = None,
             icon_position: Literal["start", "end"] | None = None,
+            icon_placement: Literal["start", "end"] | None = None,
             loading: bool | dict | None = None,
             shape: Literal["default", "circle", "round"] | None = None,
             size: Literal["large", "middle", "small"] | None = None,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             href_target: str | None = None,
             type: Literal["primary", "dashed", "link", "text", "default"]
         | None = None,
@@ -113,7 +114,7 @@ class AntdButton(ModelScopeLayoutComponent):
                          elem_style=elem_style,
                          **kwargs)
         self.value = value
-        self.props = props
+        self.additional_props = additional_props
         self.auto_insert_space = auto_insert_space
         self.block = block
         self.class_names = class_names
@@ -124,6 +125,7 @@ class AntdButton(ModelScopeLayoutComponent):
         self.html_type = html_type
         self.icon = icon
         self.icon_position = icon_position
+        self.icon_placement = icon_placement
         self.loading = loading
         self.shape = shape
         self.size = size

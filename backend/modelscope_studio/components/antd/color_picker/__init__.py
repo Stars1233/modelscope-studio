@@ -39,7 +39,7 @@ class AntdColorPicker(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: str | list[dict] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             value_format: Literal['hex', 'rgb', 'hsb'] = 'hex',
             allow_clear: bool | None = None,
@@ -63,6 +63,8 @@ class AntdColorPicker(ModelScopeDataLayoutComponent):
             panel_render: str | None = None,
             size: Literal['small', 'middle', 'large'] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -80,7 +82,9 @@ class AntdColorPicker(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.value_format = value_format
         self.allow_clear = allow_clear
         self.arrow = arrow

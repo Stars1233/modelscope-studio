@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "modelscope_studio"
-version = "1.6.1"
+version = "2.0.0-beta.1"
 description = "A third-party component library based on Gradio."
 readme = "README.md"
 license = "Apache-2.0"
@@ -23,7 +23,7 @@ keywords = [
   'gradio-antdx',
 ]
 # Add dependencies here
-dependencies = ["gradio>=4.43.0,<6.0"]
+dependencies = ["gradio>=6.0,<=6.8.0"]
 classifiers = [
   'Development Status :: 3 - Alpha',
   'License :: OSI Approved :: Apache Software License',
@@ -45,12 +45,6 @@ dev = ["build", "twine"]
 [tool.hatch.build]
 artifacts = [
   "*.pyi",
-  "backend/modelscope_studio/components/legacy/Chatbot/templates",
-  "backend/modelscope_studio/components/legacy/Flow/templates",
-  "backend/modelscope_studio/components/legacy/MultimodalInput/templates",
-  "backend/modelscope_studio/components/legacy/Markdown/templates",
-  "backend/modelscope_studio/components/legacy/WaterfallGallery/templates",
-  "/backend/modelscope_studio/components/legacy/Lifecycle/templates",
   "/backend/modelscope_studio/components/antd/button/templates",
   "/backend/modelscope_studio/components/antd/card/templates",
   "/backend/modelscope_studio/components/antd/card/grid/templates",
@@ -84,6 +78,8 @@ artifacts = [
   "/backend/modelscope_studio/components/antd/dropdown/templates",
   "/backend/modelscope_studio/components/antd/dropdown/button/templates",
   "/backend/modelscope_studio/components/antd/flex/templates",
+  "/backend/modelscope_studio/components/antd/masonry/templates",
+  "/backend/modelscope_studio/components/antd/masonry/item/templates",
   "/backend/modelscope_studio/components/antd/layout/templates",
   "/backend/modelscope_studio/components/antd/layout/content/templates",
   "/backend/modelscope_studio/components/antd/layout/footer/templates",
@@ -198,11 +194,6 @@ artifacts = [
   "/backend/modelscope_studio/components/antd/upload/dragger/templates",
   "/backend/modelscope_studio/components/antd/splitter/templates",
   "/backend/modelscope_studio/components/antd/splitter/panel/templates",
-  "/backend/modelscope_studio/components/legacy/Chatbot/templates",
-  "/backend/modelscope_studio/components/legacy/Flow/templates",
-  "/backend/modelscope_studio/components/legacy/Markdown/templates",
-  "/backend/modelscope_studio/components/legacy/MultimodalInput/templates",
-  "/backend/modelscope_studio/components/legacy/WaterfallGallery/templates",
   "/backend/modelscope_studio/components/antd/form/provider/templates",
   "/backend/modelscope_studio/components/antd/modal/static/templates",
   "/backend/modelscope_studio/components/antdx/bubble/templates",
@@ -232,6 +223,26 @@ artifacts = [
   "/backend/modelscope_studio/components/antd/statistic/timer/templates",
   "/backend/modelscope_studio/components/pro/monaco_editor/templates",
   "/backend/modelscope_studio/components/pro/monaco_editor/diff_editor/templates",
+  "/backend/modelscope_studio/components/antdx/actions/action_item/templates",
+  "/backend/modelscope_studio/components/antdx/actions/audio/templates",
+  "/backend/modelscope_studio/components/antdx/actions/copy/templates",
+  "/backend/modelscope_studio/components/antdx/actions/feedback/templates",
+  "/backend/modelscope_studio/components/antdx/bubble/divider/templates",
+  "/backend/modelscope_studio/components/antdx/bubble/system/templates",
+  "/backend/modelscope_studio/components/antdx/code_highlighter/templates",
+  "/backend/modelscope_studio/components/antdx/file_card/templates",
+  "/backend/modelscope_studio/components/antdx/file_card/list/templates",
+  "/backend/modelscope_studio/components/antdx/file_card/list/item/templates",
+  "/backend/modelscope_studio/components/antdx/folder/templates",
+  "/backend/modelscope_studio/components/antdx/folder/directory_icon/templates",
+  "/backend/modelscope_studio/components/antdx/folder/tree_node/templates",
+  "/backend/modelscope_studio/components/antdx/mermaid/templates",
+  "/backend/modelscope_studio/components/antdx/notification/templates",
+  "/backend/modelscope_studio/components/antdx/sender/switch/templates",
+  "/backend/modelscope_studio/components/antdx/sources/templates",
+  "/backend/modelscope_studio/components/antdx/sources/item/templates",
+  "/backend/modelscope_studio/components/antdx/think/templates",
+  "/backend/modelscope_studio/components/antdx/thought_chain/thought_chain_item/templates",
 ]
 
 [tool.yapfignore]

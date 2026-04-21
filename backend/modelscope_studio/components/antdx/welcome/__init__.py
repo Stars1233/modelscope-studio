@@ -16,12 +16,12 @@ class AntdXWelcome(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             extra: str | None = None,
             icon: str | None = None,
-            styles: dict | None = None,
-            class_names: dict | None = None,
+            styles: dict | str | None = None,
+            class_names: dict | str | None = None,
             description: str | None = None,
             variant: Literal['filled', 'borderless'] | None = None,
             title: str | None = None,
@@ -42,7 +42,7 @@ class AntdXWelcome(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.extra = extra
         self.icon = self.serve_static_file(icon)
         self.styles = styles

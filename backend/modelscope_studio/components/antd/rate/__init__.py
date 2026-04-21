@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from gradio.events import EventListener
 
@@ -37,7 +37,7 @@ class AntdRate(ModelScopeDataLayoutComponent):
     def __init__(
             self,
             value: int | float | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             allow_clear: bool | None = None,
             allow_half: bool | None = None,
@@ -47,8 +47,11 @@ class AntdRate(ModelScopeDataLayoutComponent):
             default_value: int | float | None = None,
             disabled: bool | None = None,
             keyboard: bool | None = None,
-            tooltips: list[str] | None = None,
+            size: Literal['default', 'small', 'large'] | None = None,
+            tooltips: list[str] | list[dict] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -66,7 +69,9 @@ class AntdRate(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.allow_clear = allow_clear
         self.allow_half = allow_half
         self.auto_focus = auto_focus
@@ -75,6 +80,7 @@ class AntdRate(ModelScopeDataLayoutComponent):
         self.default_value = default_value
         self.disabled = disabled
         self.keyboard = keyboard
+        self.size = size
         self.tooltips = tooltips
         self.root_class_name = root_class_name
 

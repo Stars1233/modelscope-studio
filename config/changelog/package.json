@@ -1,6 +1,6 @@
 {
   "name": "@modelscope-studio/changelog",
-  "version": "1.6.1",
+  "version": "2.0.0-beta.1",
   "private": false,
   "description": "ModelScope Studio Changelog",
   "repository": "git@github.com:modelscope/modelscope-studio.git",
@@ -19,13 +19,13 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@changesets/get-github-info": "^0.6.0",
+    "@changesets/get-github-info": "^0.8.0",
     "@manypkg/get-packages": "^3.1.0",
     "detect-indent": "^7.0.2"
   },
   "devDependencies": {
     "@changesets/types": "^6.1.0",
-    "@types/node": "^24.10.0",
-    "tsup": "^8.5.0"
+    "@types/node": "^25.5.2",
+    "tsup": "^8.5.1"
   }
 }

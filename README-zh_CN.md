@@ -33,12 +33,20 @@
 
 ## 依赖
 
-- Gradio >= 4.43.0
+- Gradio >= 6.0.0
+
+> 注意：您的 Gradio 版本必须`<=6.8.0`，[为什么？](https://github.com/gradio-app/gradio/issues/13131)
 
 ## 安装
 
 ```sh
 pip install modelscope_studio
+```
+
+如果您需要使用`4.43.0 <= Gradio < 6.0.0`，请使用 1.x 版本：
+
+```sh
+pip install modelscope_studio~=1.0
 ```
 
 ## 快速开始
@@ -61,21 +69,9 @@ demo.queue().launch()
 - ModelScope: [中文](https://modelscope.cn/studios/modelscope/modelscope-studio)
 - Hugging Face: [English](https://huggingface.co/spaces/modelscope/modelscope-studio)
 
-## 迁移到 1.0
+## Wiki
 
-如果您在之前使用了`modelscope_studio`的组件，并且想要在新版本中继续使用。不需要对原有组件做任何修改，只需要在外层引入`ms.Application`即可。
-
-```python
-import gradio as gr
-import modelscope_studio.components.base as ms
-import modelscope_studio.components.legacy as mgr
-
-with gr.Blocks() as demo:
-    with ms.Application():
-        mgr.Chatbot()
-
-demo.launch()
-```
+[链接](./.wiki/zh)
 
 ## 开发
 

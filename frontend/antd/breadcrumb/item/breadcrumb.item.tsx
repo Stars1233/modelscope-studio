@@ -1,5 +1,4 @@
 import { sveltify } from '@svelte-preprocess-react';
-import type { SetSlotParams } from '@svelte-preprocess-react/slot';
 import React from 'react';
 import { createFunction } from '@utils/createFunction';
 import { renderItems } from '@utils/renderItems';
@@ -16,13 +15,25 @@ import { ItemHandler, type ItemHandlerProps } from '../context';
 export const BreadcrumbItem = sveltify<
   BreadcrumbItemProps &
     ItemHandlerProps & {
-      setSlotParams: SetSlotParams;
-      itemSlots: Record<string, HTMLElement>;
+      itemSlots: Record<
+        [
+          'title',
+          'menu.expandIcon',
+          'menu.overflowedIndicator',
+          'menu.items',
+          'dropdownProps.dropdownRender',
+          'dropdownProps.popupRender',
+          'dropdownProps.menu.expandIcon',
+          'dropdownProps.menu.overflowedIndicator',
+          'dropdownProps.menu.items',
+        ][number],
+        HTMLElement
+      >;
     }
 >(
   withMenuItemsContextProvider(
     ['menu.items', 'dropdownProps.menu.items'],
-    ({ setSlotParams, itemSlots: slots, ...props }) => {
+    ({ itemSlots: slots, ...props }) => {
       const {
         items: {
           'menu.items': menuItems,
@@ -36,7 +47,7 @@ export const BreadcrumbItem = sveltify<
             const menu = {
               ...(itemProps.menu || {}),
               items:
-                itemProps.menu?.items || menuItems.length > 0
+                itemProps.menu?.items || menuItems?.length > 0
                   ? renderItems(menuItems, {
                       clone: true,
                     })
@@ -44,7 +55,6 @@ export const BreadcrumbItem = sveltify<
               expandIcon:
                 renderParamsSlot(
                   {
-                    setSlotParams,
                     slots: slots,
                     key: 'menu.expandIcon',
                   },
@@ -60,7 +70,7 @@ export const BreadcrumbItem = sveltify<
               ...(itemProps.dropdownProps?.menu || {}),
               items:
                 itemProps.dropdownProps?.menu?.items ||
-                dropdownMenuItems.length > 0
+                dropdownMenuItems?.length > 0
                   ? renderItems(dropdownMenuItems, {
                       clone: true,
                     })
@@ -68,7 +78,6 @@ export const BreadcrumbItem = sveltify<
               expandIcon:
                 renderParamsSlot(
                   {
-                    setSlotParams,
                     slots: slots,
                     key: 'dropdownProps.menu.expandIcon',
                   },
@@ -86,7 +95,6 @@ export const BreadcrumbItem = sveltify<
               dropdownRender: slots['dropdownProps.dropdownRender']
                 ? renderParamsSlot(
                     {
-                      setSlotParams,
                       slots: slots,
                       key: 'dropdownProps.dropdownRender',
                     },
@@ -98,7 +106,6 @@ export const BreadcrumbItem = sveltify<
               popupRender: slots['dropdownProps.popupRender']
                 ? renderParamsSlot(
                     {
-                      setSlotParams,
                       slots: slots,
                       key: 'dropdownProps.popupRender',
                     },
@@ -112,8 +119,10 @@ export const BreadcrumbItem = sveltify<
                   ? dropdownMenu
                   : undefined,
             };
+
             return {
               ...itemProps,
+              title: renderSlot(slots.title) || itemProps.title,
               menu:
                 Object.values(menu).filter(Boolean).length > 0
                   ? menu

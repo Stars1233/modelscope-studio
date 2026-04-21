@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any, Literal
 
 from gradio.events import EventListener
@@ -42,7 +43,7 @@ class AntdLayoutSider(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             breakpoint: Literal['xs', 'sm', 'md', 'lg', 'xl', 'xxl']
         | None = None,
@@ -52,9 +53,12 @@ class AntdLayoutSider(ModelScopeLayoutComponent):
             default_collapsed: bool | None = None,
             reverse_arrow: bool | None = None,
             theme: Literal['light', 'dark'] | None = None,
+            theme_value: Literal['light', 'dark'] | None = None,
             trigger: str | None = 'default',
             width: int | float | str = 200,
             zero_width_trigger_style: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -84,7 +88,9 @@ class AntdLayoutSider(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.breakpoint = breakpoint
         self.collapsed = collapsed
         self.collapsed_width = collapsed_width
@@ -92,6 +98,11 @@ class AntdLayoutSider(ModelScopeLayoutComponent):
         self.default_collapsed = default_collapsed
         self.reverse_arrow = reverse_arrow
         self.theme = theme
+        if theme:
+            warnings.warn(
+                """<modelscope-studio>[antd.Layout.Sider]:  the `theme` property conflicts with Gradio's preset properties. Please use `theme_value` instead."""
+            )
+        self.theme_value = theme_value or theme
         self.trigger = trigger
         self.width = width
         self.zero_width_trigger_style = zero_width_trigger_style

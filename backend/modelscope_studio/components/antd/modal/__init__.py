@@ -33,11 +33,11 @@ class AntdModal(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             after_close: str | None = None,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             cancel_button_props: dict | None = None,
             cancel_text: str | None = None,
             centered: bool | None = None,
@@ -47,6 +47,7 @@ class AntdModal(ModelScopeLayoutComponent):
             destroy_on_close: bool | None = None,
             destroy_on_hidden: bool | None = None,
             focus_trigger_after_close: bool | None = None,
+            focusable: dict | None = None,
             footer: str | Literal['DEFAULT_FOOTER'] | None = "DEFAULT_FOOTER",
             force_render: bool | None = None,
             get_container: str | None = None,
@@ -81,7 +82,7 @@ class AntdModal(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.after_close = after_close
         self.class_names = class_names
         self.styles = styles
@@ -94,6 +95,7 @@ class AntdModal(ModelScopeLayoutComponent):
         self.destroy_on_close = destroy_on_close
         self.destroy_on_hidden = destroy_on_hidden
         self.focus_trigger_after_close = focus_trigger_after_close
+        self.focusable = focusable
         self.footer = footer
         self.force_render = force_render
         self.get_container = get_container

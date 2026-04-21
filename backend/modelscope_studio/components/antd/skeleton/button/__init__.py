@@ -13,7 +13,7 @@ class AntdSkeletonButton(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             active: bool | None = None,
             block: bool | None = None,
@@ -21,6 +21,8 @@ class AntdSkeletonButton(ModelScopeLayoutComponent):
         | None = None,
             size: Literal['large', 'small', 'default'] | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -37,7 +39,9 @@ class AntdSkeletonButton(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.active = active
         self.block = block
         self.shape = shape

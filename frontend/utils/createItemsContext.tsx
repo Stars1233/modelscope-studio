@@ -1,7 +1,7 @@
 import {
   type ContextPropsContextValue,
   useContextPropsContext,
-} from '@svelte-preprocess-react/context';
+} from '@svelte-preprocess-react/react-contexts';
 import {
   createContext,
   useCallback,
@@ -25,10 +25,9 @@ export type Item<T extends string = 'children'> =
         | HTMLElement
         | {
             el?: HTMLElement;
-            // slot key, render args
-            callback?: (key: string, params: any[]) => void;
             clone?: boolean;
             forceClone?: boolean;
+            withParams?: boolean;
           }
       >;
       el?: HTMLElement;
@@ -65,10 +64,9 @@ export interface ItemHandlerProps<
     | undefined
     | {
         el?: HTMLElement;
-        // slot key, render args
-        callback?: (key: string, params: any[]) => void;
         clone?: boolean;
-        ß?: boolean;
+        forceClone?: boolean;
+        withParams?: boolean;
       }
   >;
   children?: React.ReactNode;
@@ -207,7 +205,7 @@ export const createItemsContext = (name: string): CreateItemsContextReturn => {
     const { ctx, forceClone } = useContextPropsContext();
     const hasItemProps = !!itemProps;
     const hasItemChildren = !!itemChildren;
-    const prevValueRef = useRef<Item>();
+    const prevValueRef = useRef<Item | undefined>(undefined);
     const [subItems, setSubItems] = useState(
       () =>
         (allowedSlots || []).reduce((acc, slotKey) => {

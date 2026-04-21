@@ -72,10 +72,10 @@
 ### 插槽
 
 ```python
-SLOTS=["roles"]
+SLOTS=["role"]
 ```
 
-另外，如果已有的 role 样式不符合预期，也可以和`Ant Design X`的`Bubble`组件一样使用`ms.Slot("roles")`进行自定义。
+另外，如果已有的 role 样式不符合预期，也可以和`Ant Design X`的`Bubble`组件一样使用`ms.Slot("role")`进行自定义。
 
 ### 类型
 
@@ -107,7 +107,7 @@ class ChatbotPromptsConfig(GradioModel):
 # Ant Design X welcome props: https://x.ant.design/components/welcome
 class ChatbotWelcomeConfig(GradioModel):
     variant: Optional[Literal['borderless', 'filled']] = 'borderless'
-    icon: Optional[Union[str, Path]] = None
+    icon: Optional[Union[str, Path, dict]] = None
     title: Optional[str] = None
     description: Optional[str] = None
     extra: Optional[str] = None
@@ -277,6 +277,8 @@ class ChatbotDataFileContentOptions(GradioModel):
     gap: Optional[Union[Literal["small", "middle", "large"], str, int,
                         float]] = "small"
     image_props: Optional[dict] = None
+    video_props: Optional[dict] = None
+    audio_props: Optional[dict] = None
 
 
 # Ant Design X prompts props: https://x.ant.design/components/prompts
@@ -318,7 +320,8 @@ class ChatbotDataMessageContent(GradioModel):
 
 
 class ChatbotDataMessage(ChatbotBotConfig):
-    role: Union[Literal['user', 'assistant', 'system'], str] = None
+    role: Union[Literal['user', 'assistant', 'system', 'divider'], str] = None
+    divider_props: Optional[dict] = None
     key: Optional[Union[str, int, float]] = None
     # If status is 'pending', the message will not render the footer area (including 'actions' and 'footer').
     status: Optional[Literal['pending', 'done']] = None

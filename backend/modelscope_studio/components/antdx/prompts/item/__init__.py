@@ -18,12 +18,12 @@ class AntdXPromptsItem(ModelScopeLayoutComponent):
     def __init__(
             self,
             label: str | None = None,
-            props: dict | None = None,
             *,
             key: str | None = None,
             description: str | None = None,
             icon: str | None = None,
             disabled: bool | None = None,
+            additional_props: dict | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -40,7 +40,7 @@ class AntdXPromptsItem(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.label = label
         self.description = description
         self.icon = icon

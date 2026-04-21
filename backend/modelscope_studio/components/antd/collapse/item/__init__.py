@@ -25,14 +25,14 @@ class AntdCollapseItem(ModelScopeLayoutComponent):
             self,
             label: str | None = None,
             key: str | float | int | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
-            class_names: dict | None = None,
+            class_names: dict | str | None = None,
             collapsible: Literal['header', 'icon', 'disabled'] | None = None,
             extra: str | None = None,
             force_render: bool | None = None,
             show_arrow: bool = True,
-            styles: dict | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -50,7 +50,7 @@ class AntdCollapseItem(ModelScopeLayoutComponent):
                          elem_style=elem_style,
                          **kwargs)
         self.label = label
-        self.props = props
+        self.additional_props = additional_props
         self.key = key
         self.class_names = class_names
         self.collapsible = collapsible

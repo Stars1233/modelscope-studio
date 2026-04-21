@@ -1,5 +1,5 @@
 import { sveltify } from '@svelte-preprocess-react';
-import { ContextPropsProvider } from '@svelte-preprocess-react/context';
+import { ContextPropsProvider } from '@svelte-preprocess-react/react-contexts';
 import { ReactSlot } from '@svelte-preprocess-react/react-slot';
 import React, { useMemo } from 'react';
 import { useTargets } from '@utils/hooks/useTargets';
@@ -35,6 +35,7 @@ const Item: React.FC<{
 export const Each = sveltify<EachProps, ['children']>(
   ({ value, contextValue, children, __internal_slot_key }) => {
     const targets = useTargets(children, __internal_slot_key);
+
     return (
       <>
         <div style={{ display: 'none' }}>

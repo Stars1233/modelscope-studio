@@ -23,12 +23,12 @@ class AntdCascaderPanel(ModelScopeDataLayoutComponent):
     ]
 
     # supported slots
-    SLOTS = ['notFoundContent', 'expandIcon']
+    SLOTS = ['notFoundContent', 'expandIcon', 'optionRender']
 
     def __init__(
             self,
             value: list[str] | list[int | float] | None = None,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             change_on_select: bool | None = None,
             default_value: str | None = None,
@@ -40,7 +40,10 @@ class AntdCascaderPanel(ModelScopeDataLayoutComponent):
             multiple: bool | None = None,
             show_checked_strategy: Literal['SHOW_PARENT', 'SHOW_CHILD']
         | None = None,
+            option_render: str | None = None,
             root_class_name: str | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             as_item: str | None = None,
             _internal: None = None,
             # gradio properties
@@ -58,7 +61,9 @@ class AntdCascaderPanel(ModelScopeDataLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.class_names = class_names
+        self.styles = styles
+        self.additional_props = additional_props
         self.change_on_select = change_on_select
         self.default_value = default_value
         self.expand_icon = expand_icon
@@ -69,6 +74,7 @@ class AntdCascaderPanel(ModelScopeDataLayoutComponent):
         self.multiple = multiple
         self.show_checked_strategy = show_checked_strategy
         self.root_class_name = root_class_name
+        self.option_render = option_render
 
     FRONTEND_DIR = resolve_frontend_dir("cascader", "panel")
 

@@ -55,7 +55,7 @@ class AntdCard(ModelScopeLayoutComponent):
 
     def __init__(
             self,
-            props: dict | None = None,
+            additional_props: dict | None = None,
             *,
             actions: str | None = None,
             active_tab_key: str | None = None,
@@ -72,8 +72,8 @@ class AntdCard(ModelScopeLayoutComponent):
             tab_props: dict | None = None,
             title: str | None = None,
             type: str | None = None,
-            class_names: dict | None = None,
-            styles: dict | None = None,
+            class_names: dict | str | None = None,
+            styles: dict | str | None = None,
             root_class_name: str | None = None,
             as_item: str | None = None,
             _internal: None = None,
@@ -99,8 +99,8 @@ class AntdCard(ModelScopeLayoutComponent):
             tab_bar_extra_content:  Extra content in tab bar.
             title:  Card title.
             type:  Card style type, can be set to inner or not set.
-            class_names:  Config Card build-in module's className.
-            styles:  Config Card build-in module's style.
+            class_names:  dict | str | None
+            styles:  dict | str | None
         """
         super().__init__(visible=visible,
                          elem_id=elem_id,
@@ -109,7 +109,7 @@ class AntdCard(ModelScopeLayoutComponent):
                          as_item=as_item,
                          elem_style=elem_style,
                          **kwargs)
-        self.props = props
+        self.additional_props = additional_props
         self.actions = actions
         self.active_tab_key = active_tab_key
         self.bordered = bordered
