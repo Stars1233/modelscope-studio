@@ -1,5 +1,11 @@
 # @modelscope-studio/antd
 
+## 2.0.1
+
+### Fixes
+
+- [`d3044b2`](https://github.com/modelscope/modelscope-studio/commit/d3044b27b375f08d73bf266862455ecc699c48a3) - global context alias. Thanks [@Col0ring](https://github.com/Col0ring)!
+
 ## 2.0.0
 
 ### Features
